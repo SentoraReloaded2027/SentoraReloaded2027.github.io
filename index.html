@@ -218,6 +218,17 @@ nav ul a:hover, nav ul a:focus-visible { color: var(--text); }
 .flow i { color: var(--muted); font-style: normal; }
 @media (max-width: 900px) { .duo { grid-template-columns: minmax(0, 1fr); } }
 
+/* hardened, then proven */
+.proof { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.proof > div { padding: 26px 24px; display: grid; gap: 14px; align-content: start; background: var(--deep); }
+.proof > div + div { border-left: 1px solid var(--line); }
+.proof .stage { font: 700 13px var(--mono); color: var(--brass); letter-spacing: .04em; }
+.proof h3 { font-size: 27px; }
+.proof .ticks li { font-size: 15px; }
+.proof-foot { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 10px 28px; color: var(--muted); font-size: 15px; }
+.proof-foot b { font: 800 34px/1 var(--display); color: var(--foam); display: block; }
+@media (max-width: 900px) { .proof { grid-template-columns: minmax(0, 1fr); } .proof > div + div { border-left: 0; border-top: 1px solid var(--line); } }
+
 /* dig deeper */
 .deeper { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
 .deeper a { display: grid; gap: 6px; align-content: start; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--deep); color: var(--text); text-decoration: none; }
@@ -419,6 +430,61 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
       <div><dt>Updates</dt><dd>The system's <strong>security updates install themselves</strong> every day; the panel updates with one click, and can roll back.</dd></div>
       <div><dt>Tested releases</dt><dd><strong>Five Linux systems installed from scratch</strong> and smoke-tested on every release. Nothing is published unless all pass.</dd></div>
     </dl>
+  </div>
+</section>
+
+<section id="proven">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Not just some app dropped on Linux</p>
+      <h2>Hardened, then proven</h2>
+      <p class="lede">Every server is set up the careful way, checked on the spot, and every release is installed and attacked on fresh systems before anyone gets it. Whatever the tests found was fixed, not hidden.</p>
+    </div>
+    <div class="proof">
+      <div>
+        <span class="stage">1 · at install</span>
+        <h3>Hardened from the start</h3>
+        <ul class="ticks">
+          <li><b>Every download checked</b> against its SHA-256: the installer itself, PHP builds, SOGo; EPEL only with Fedora's signature</li>
+          <li><b>Random passwords</b> for every service, kept in a file only root can read</li>
+          <li><b>SELinux labels and AppArmor rules</b> written for Sentora's folders, so nothing has to be switched off</li>
+          <li>MySQL, memcached and SOGo <b>listen on the server only</b>; unneeded consoles such as Cockpit switched off</li>
+          <li>Settings files readable only by the service that needs them; <b>nothing writable by everyone</b></li>
+          <li>Package mirrors read over <b>HTTPS</b> when a network tampers with plain downloads</li>
+          <li><b>Automatic security updates</b> on from the first day</li>
+        </ul>
+      </div>
+      <div>
+        <span class="stage">2 · on your server</span>
+        <h3>Checked on the spot</h3>
+        <ul class="ticks">
+          <li><b>sentora-post-install-check</b>: about a hundred checks, from open ports and file permissions to TLS and stored passwords</li>
+          <li>Which services <b>run confined</b> by SELinux or AppArmor, and anything refused since the start</li>
+          <li><b>sentora-smoke-test</b>: 26 real steps (a client, site, FTP upload, mail sent and delivered, a virus and spam refused, database, backup and restore)</li>
+          <li><b>Account isolation</b> tried for real: one account must not reach another's files</li>
+          <li>Sites may use <b>only their own PHP</b>; the panel's PHP runs only the panel's own scripts</li>
+          <li>Two-factor login, login lockout and <b>fail2ban</b> watching the panel, mail, FTP and SSH</li>
+        </ul>
+      </div>
+      <div>
+        <span class="stage">3 · before every release</span>
+        <h3>Proven, every time</h3>
+        <ul class="ticks">
+          <li><b>Five Linux systems installed from scratch</b>, restarted, checked and smoke-tested on GitHub; nothing is published unless all pass</li>
+          <li><b>AppArmor in enforce mode</b> during those tests: any refusal fails the release</li>
+          <li><b>Real attacks</b> on a hosted site (cross-site scripting, SQL injection, path traversal) must be stopped by ModSecurity</li>
+          <li>New add-ons get a <b>security review</b> and their own tests before they're offered</li>
+          <li><b>Security watch</b> every week: known exploited holes (CISA's list) and new releases of everything Sentora ships</li>
+          <li><b>Tried on real machines</b> too: Ubuntu, Debian, AlmaLinux, RHEL, Fedora and Windows 11</li>
+        </ul>
+      </div>
+    </div>
+    <div class="proof-foot">
+      <span><b>~100</b>checks on every server</span>
+      <span><b>26</b>real steps in the smoke test</span>
+      <span><b>5</b>systems tested per release</span>
+      <span><b>0</b>guards switched off</span>
+    </div>
   </div>
 </section>
 
