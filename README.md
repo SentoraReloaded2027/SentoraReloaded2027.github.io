@@ -11,3 +11,5 @@ and its installers in [RusTus/sentora-installers-2027](https://github.com/RusTus
   `python3 tools/build-pages.py` from the top folder, then commit the pages it wrote.
 - `sitemap.xml` lists every page for search engines; add a new page there too.
 - Only tested facts go on the site.
+- `google580fbb6ffa1f5907.html`: Google Search Console's ownership file (verified 2026-11-11, sitemap
+  submitted). Keep it: Google checks it now and then, and removing it drops the verification.
