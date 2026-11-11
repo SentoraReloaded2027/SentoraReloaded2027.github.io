@@ -229,6 +229,9 @@ nav ul a:hover, nav ul a:focus-visible { color: var(--text); }
 .proof-foot b { font: 800 34px/1 var(--display); color: var(--foam); display: block; }
 @media (max-width: 900px) { .proof { grid-template-columns: minmax(0, 1fr); } .proof > div + div { border-left: 0; border-top: 1px solid var(--line); } }
 
+.tagline { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 700 21px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--foam); }
+.tagline span + span::before { content: "\00B7"; margin-right: 14px; color: var(--brass); }
+
 /* rebuilt, not patched */
 .rebuilt { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; align-items: center; }
 .figs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
@@ -286,7 +289,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
     <div class="copy">
       <p class="eyebrow">Open-source web hosting control panel</p>
       <h1>Sentora <span class="yr">2027</span><span class="re">Reloaded</span></h1>
-      <p class="lede">The panel you know, rebuilt for today's servers. Secure by default, installed and tested on six Linux systems before every release, and on Windows with one setup file.</p>
+      <p class="tagline" aria-label="Reimagined, rebuilt, renewed"><span>Reimagined</span><span>Rebuilt</span><span>Renewed</span></p>
+      <p class="lede">The panel you know, rebuilt for today's servers. Secure by default, on six Linux systems and Windows, and installed from scratch and tested on five of them before every release.</p>
       <div class="ctas">
         <a class="btn primary" href="#install">Install on Linux</a>
         <a class="btn" href="#windows">Get it for Windows</a>
