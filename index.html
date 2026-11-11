@@ -292,8 +292,70 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
   .win { padding: 24px; }
   section { padding-block: 52px; }
 }
+/* live: newest release and its install test */
+.live { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; }
+.live[hidden], .lasttest[hidden] { display: none; }
+.live a { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px; background: var(--deep); }
+.live a:hover, .live a:focus-visible { border-color: var(--foam); color: var(--text); outline: none; }
+.live a b { color: var(--text); font-weight: 600; }
+.live i { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 25%, transparent); }
+.lasttest { margin-top: 26px; border: 1px solid var(--line); border-radius: 10px; background: var(--deep); padding: 22px 24px; display: grid; gap: 16px; }
+.lasttest-head { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; justify-content: space-between; }
+.lasttest-head h3 { font-size: 24px; }
+.lasttest-head a { font-size: 14px; }
+.lasttest-head p { flex-basis: 100%; color: var(--muted); font-size: 15px; }
+.runs { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.runs li { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: #04121a; display: grid; gap: 4px; }
+.runs b { font: 700 19px/1.1 var(--display); text-transform: uppercase; letter-spacing: .02em; }
+.runs span { font-size: 13px; color: var(--muted); }
+.runs .pass { color: var(--ok); font-weight: 600; }
+.runs .fail { color: #ff8a7a; font-weight: 600; }
+
+/* then and now */
+.thennow { width: 100%; border-collapse: collapse; font-size: 15px; border-top: 1px solid var(--line); }
+.thennow th, .thennow td { text-align: left; vertical-align: top; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.thennow thead th { font: 600 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.thennow thead th:last-child { color: var(--brass); }
+.thennow tbody th { font: 700 19px/1.15 var(--display); text-transform: uppercase; letter-spacing: .02em; color: var(--foam); width: 22%; }
+.thennow td { width: 39%; }
+.thennow td.then { color: var(--muted); }
+.thennow td.now { color: var(--text); }
+@media (max-width: 640px) {
+  .thennow thead { display: none; }
+  .thennow tr { display: grid; gap: 6px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .thennow th, .thennow td { display: block; width: auto; padding: 0; border: 0; }
+  .thennow td::before { display: block; font: 600 11px/1.6 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .thennow td.then::before { content: "Then"; }
+  .thennow td.now::before { content: "Sentora 2027"; color: var(--brass); }
+}
+
+/* questions */
+.faq { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; align-items: start; }
+.faq details { border: 1px solid var(--line); border-radius: 8px; background: var(--deep); }
+.faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 14px; padding: 16px 18px; font-weight: 600; font-size: 17px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; flex: none; color: var(--brass); font: 700 24px/1 var(--display); }
+.faq details[open] summary::after { content: "\2212"; }
+.faq summary:focus-visible { outline: 2px solid var(--foam); outline-offset: 2px; border-radius: 8px; }
+.faq .a { padding: 0 18px 18px; color: var(--muted); display: grid; gap: 10px; font-size: 15px; }
+.faq .a b { color: var(--text); font-weight: 600; }
+@media (max-width: 900px) { .faq { grid-template-columns: minmax(0, 1fr); } }
 @media (prefers-reduced-motion: reduce) { .t-bar b { animation: none; } html { scroll-behavior: auto; } }
 </style>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [{"@type": "Question", "name": "Is it really free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The panel, the installers and the add-ons are free and open source under the GNU GPL v3. Nothing to buy, no licence key."}},
+  {"@type": "Question", "name": "Do I need a domain name?", "acceptedAnswer": {"@type": "Answer", "text": "The panel needs a full host name, such as panel.example.com, ideally with a DNS A record pointing at the server. It installs without the record and uses its own certificate until then; once the name points at the server, Sencrypt SSL in the panel gets a free Let's Encrypt certificate for it."}},
+  {"@type": "Question", "name": "How much memory does it need?", "acceptedAnswer": {"@type": "Answer", "text": "There's no fixed minimum. ClamAV, the virus scanner, needs about 1.5 GB on its own, so on a smaller server it's left off and can be switched on later in SpamAV Admin. On Windows, give the PC 8 GB or more."}},
+  {"@type": "Question", "name": "Can I upgrade my old Sentora or ZPanel server?", "acceptedAnswer": {"@type": "Answer", "text": "Not in place: Sentora 2027 goes on a fresh server, and the installer stops if it finds an old panel. Your accounts, sites, databases and mail move over with two commands."}},
+  {"@type": "Question", "name": "Does it run in a virtual machine or a VPS?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. It's tested in virtual machines and in containers on GitHub. A VPS or cloud server works the same way, as long as it's a fresh install of one of the supported systems. On Windows inside a virtual machine, switch on nested virtualization first."}},
+  {"@type": "Question", "name": "Windows or Linux for real hosting?", "acceptedAnswer": {"@type": "Answer", "text": "Linux. Inside WSL there is no SELinux or AppArmor, and Windows updates restart the PC. Windows is great for trying Sentora, a home lab or an office server; for hosting other people's websites, use a Linux server."}},
+  {"@type": "Question", "name": "How do I remove it?", "acceptedAnswer": {"@type": "Answer", "text": "Windows: Settings > Apps > Sentora 2027 > Uninstall. Everything goes; your backups stay. Linux: Sentora sets up the whole server, so there's no uninstaller. Take a backup and reinstall the system to start clean."}},
+  {"@type": "Question", "name": "Where do I get help?", "acceptedAnswer": {"@type": "Answer", "text": "Find an answer below searches the guides and the changelog. Found a problem? Tell us on GitHub, with what you saw and on which system."}}]
+}
+</script>
 </head>
 <body>
 <nav aria-label="Main">
@@ -306,6 +368,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
       <li><a href="#security">Security</a></li>
       <li><a href="#screenshots">Screenshots</a></li>
       <li><a href="#inside">What's inside</a></li>
+      <li><a href="#faq">FAQ</a></li>
       <li><a href="#docs">Find an answer</a></li>
       <li><a href="https://github.com/RusTus/sentora-core-2027">GitHub</a></li>
     </ul>
@@ -323,6 +386,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
         <a class="btn primary" href="#install">Install on Linux</a>
         <a class="btn" href="#windows">Get it for Windows</a>
       </div>
+      <p class="live" id="live" hidden></p>
     </div>
     <div class="term" role="img" aria-label="The Sentora 2027 installer finishing its steps">
       <div class="term-bar"><i></i><i></i><i></i></div>
@@ -461,7 +525,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
         </ul>
       </div>
       <div class="update-card" aria-hidden="true">
-        <div class="notice"><b>A panel update is available.</b> Sentora-2027.73 is ready to install.</div>
+        <div class="notice"><b>A panel update is available.</b> <span data-live-version>Sentora-2027.73</span> is ready to install.</div>
         <div class="flow"><span>download</span><i>&rarr;</i><span>check SHA-256</span><i>&rarr;</i><span>back up</span><i>&rarr;</i><span>update</span><i>&rarr;</i><span>done</span></div>
         <div class="cmd"><code>sentora-update</code><button type="button">Copy</button></div>
         <p style="margin:0;color:var(--muted);font-size:14px">Over SSH as root; <code>sentora-update --rollback</code> goes back.</p>
@@ -543,7 +607,40 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
       <span><b>5</b>systems tested per release</span>
       <span><b>0</b>guards switched off</span>
     </div>
+    <div class="lasttest" id="lasttest" hidden>
+      <div class="lasttest-head">
+        <h3 id="lasttest-title">The newest release's test</h3>
+        <a id="lasttest-link" href="https://github.com/RusTus/sentora-installers-2027/actions/workflows/release.yml">See the run on GitHub &rarr;</a>
+        <p id="lasttest-note">Read live from GitHub: each system installed from scratch, restarted, checked and smoke-tested.</p>
+      </div>
+      <ul class="runs" id="lasttest-runs"></ul>
+    </div>
     <p class="lede" style="margin-top:26px"><strong style="color:var(--text)">So you can rest easy.</strong> Sentora 2027 is built and tested like the server software it is, with the time taken to keep your websites, mail and your clients' information safe.</p>
+  </div>
+</section>
+
+<section id="then-now">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Side by side</p>
+      <h2>Then and now</h2>
+      <p class="lede">The old Sentora next to Sentora 2027, taken from the old installers and code and from the changelog.</p>
+    </div>
+    <table class="thennow">
+      <thead><tr><th scope="col">&nbsp;</th><th scope="col">Then</th><th scope="col">Sentora 2027</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Systems</th><td class="then">Ubuntu 16.04 to 22.04, CentOS, Debian</td><td class="now">Ubuntu 26.04, Debian 13, AlmaLinux, Rocky and RHEL 10, Fedora 45, and Windows through WSL</td></tr>
+        <tr><th scope="row">SELinux &amp; AppArmor</th><td class="then">Switched off: the installers disabled SELinux and removed AppArmor</td><td class="now">On, with Sentora's folders added to the rules</td></tr>
+        <tr><th scope="row">Websites</th><td class="then">Every site ran as the same user, so one site could reach the others</td><td class="now">Each account has its own Linux user, PHP pool and closed folder</td></tr>
+        <tr><th scope="row">Panel files</th><td class="then">Writable by everyone (<code>chmod -R 777</code>)</td><td class="now">Owned by root; nothing writable by everyone</td></tr>
+        <tr><th scope="row">Root helper</th><td class="then">zsudo ran any command as root, for anyone</td><td class="now">A fixed list of reloads, for root and the panel only</td></tr>
+        <tr><th scope="row">PHP</th><td class="then">PHP 7 (5 before that) inside Apache</td><td class="now">PHP 8 through PHP-FPM, several versions side by side, chosen per domain</td></tr>
+        <tr><th scope="row">Database</th><td class="then">MySQL 5 or MariaDB</td><td class="now">MySQL 8.4, or the system's own MariaDB</td></tr>
+        <tr><th scope="row">FTP</th><td class="then">Plain FTP, passwords sent in the open</td><td class="now">FTPS required</td></tr>
+        <tr><th scope="row">Updates</th><td class="then">By hand: unzip, run the SQL, set permissions</td><td class="now">One click or one command: checked, backed up, with rollback</td></tr>
+        <tr><th scope="row">Testing</th><td class="then">&nbsp;&mdash;</td><td class="now">Five systems installed from scratch and tested before every release</td></tr>
+      </tbody>
+    </table>
   </div>
 </section>
 
@@ -611,6 +708,25 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
       <div class="addon"><b>Visitor Stats</b><span>visitors, pages, referrers</span></div>
       <div class="addon"><b>Log Forwarder</b><span>ELK, OpenSearch, Loki</span></div>
       <div class="addon"><b>PHP-Adminer</b><span>databases in one file</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Before you start</p>
+      <h2>Questions people ask</h2>
+    </div>
+    <div class="faq">
+      <details><summary>Is it really free?</summary><div class="a"><p>Yes. The panel, the installers and the add-ons are free and open source under the GNU GPL v3. Nothing to buy, no licence key.</p></div></details>
+      <details><summary>Do I need a domain name?</summary><div class="a"><p>The panel needs a full host name, such as <b>panel.example.com</b>, ideally with a DNS A record pointing at the server. It installs without the record and uses its own certificate until then; once the name points at the server, <b>Sencrypt SSL</b> in the panel gets a free Let's Encrypt certificate for it.</p></div></details>
+      <details><summary>How much memory does it need?</summary><div class="a"><p>There's no fixed minimum. ClamAV, the virus scanner, needs about <b>1.5 GB</b> on its own, so on a smaller server it's left off and can be switched on later in SpamAV Admin. On Windows, give the PC <b>8 GB or more</b>.</p></div></details>
+      <details><summary>Can I upgrade my old Sentora or ZPanel server?</summary><div class="a"><p>Not in place: Sentora 2027 goes on a <b>fresh server</b>, and the installer stops if it finds an old panel. Your accounts, sites, databases and mail <a href="#move">move over with two commands</a>.</p></div></details>
+      <details><summary>Does it run in a virtual machine or a VPS?</summary><div class="a"><p>Yes. It's tested in virtual machines and in containers on GitHub. A VPS or cloud server works the same way, as long as it's a fresh install of one of the supported systems. On Windows inside a virtual machine, switch on <b>nested virtualization</b> first.</p></div></details>
+      <details><summary>Windows or Linux for real hosting?</summary><div class="a"><p><b>Linux.</b> Inside WSL there is no SELinux or AppArmor, and Windows updates restart the PC. Windows is great for trying Sentora, a home lab or an office server; for hosting other people's websites, use a Linux server.</p></div></details>
+      <details><summary>How do I remove it?</summary><div class="a"><p><b>Windows:</b> Settings &gt; Apps &gt; Sentora 2027 &gt; Uninstall. Everything goes; your backups stay.</p><p><b>Linux:</b> Sentora sets up the whole server, so there's no uninstaller. Take a backup and reinstall the system to start clean.</p></div></details>
+      <details><summary>Where do I get help?</summary><div class="a"><p><a href="#docs">Find an answer</a> below searches the guides and the changelog. Found a problem? <a href="https://github.com/RusTus/sentora-core-2027/issues">Tell us on GitHub</a>, with what you saw and on which system.</p></div></details>
     </div>
   </div>
 </section>
@@ -802,6 +918,60 @@ document.querySelectorAll('.cmd button').forEach(function (b) {
   q.addEventListener('focus', load, { once: true });
   q.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(run, 180); });
   document.querySelectorAll('#docs .chips button').forEach(function (b) { b.addEventListener('click', function () { q.value = b.textContent; load().then ? load().then(run) : run(); q.focus(); }); });
+})();
+
+// Live from GitHub: the newest release, and the install test it had to pass. Shown only when GitHub answers;
+// kept for 15 minutes so a visitor doesn't use up GitHub's limit for their address.
+(function () {
+  var API = 'https://api.github.com/repos/RusTus/', KEY = 'sentora-live-v2', SYS = { 'ub26.04': 'Ubuntu 26.04', 'deb13': 'Debian 13', 'alma10': 'AlmaLinux 10', 'rocky10': 'Rocky Linux 10', 'fedora45': 'Fedora 45' };
+  function get(p) { return fetch(API + p, { headers: { Accept: 'application/vnd.github+json' } }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
+  function day(s) { return new Date(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+  function mins(a, b) { return Math.max(1, Math.round((new Date(b) - new Date(a)) / 60000)); }
+  function load() {
+    try { var c = JSON.parse(sessionStorage.getItem(KEY) || 'null'); if (c && Date.now() - c.at < 900000) return Promise.resolve(c.d); } catch (e) {}
+    return Promise.all([get('sentora-core-2027/releases?per_page=10'), get('sentora-installers-2027/actions/workflows/release.yml/runs?branch=master2027&status=success&per_page=1')]).then(function (x) {
+      var rel = x[0].filter(function (r) { return !r.draft && !r.prerelease && /^v2027\.\d+$/.test(r.tag_name); })
+        .sort(function (a, b) { return new Date(b.published_at) - new Date(a.published_at); })[0];
+      var run = x[1].workflow_runs && x[1].workflow_runs[0];
+      if (!rel) throw new Error('no release');
+      var d = { version: rel.tag_name.slice(1), date: rel.published_at, url: rel.html_url };
+      if (!run) return d;
+      return get('sentora-installers-2027/actions/runs/' + run.id + '/jobs?per_page=50').then(function (j) {
+        d.run = run.html_url; d.runDate = run.run_started_at || run.created_at;
+        d.jobs = j.jobs.map(function (job) { var m = /^install-test \/ install \((.+)\)$/.exec(job.name); return m && { sys: m[1], ok: job.conclusion, a: job.started_at, b: job.completed_at }; }).filter(Boolean).sort(function (x, y) { var o = Object.keys(SYS); return (o.indexOf(x.sys) + 99) % 99 - (o.indexOf(y.sys) + 99) % 99; });
+        return d;
+      });
+    }).then(function (d) { try { sessionStorage.setItem(KEY, JSON.stringify({ at: Date.now(), d: d })); } catch (e) {} return d; });
+  }
+  load().then(function (d) {
+    var jobs = d.jobs || [], passed = jobs.filter(function (j) { return j.ok === 'success'; }).length, all = jobs.length && passed === jobs.length;
+    var live = document.getElementById('live');
+    var a1 = document.createElement('a'); a1.href = d.url;
+    a1.innerHTML = '<i></i><span>Current release <b></b> &middot; <span></span></span>';
+    a1.querySelector('b').textContent = d.version; a1.querySelector('span span').textContent = day(d.date);
+    live.appendChild(a1);
+    if (all) {
+      var a2 = document.createElement('a'); a2.href = '#proven';
+      a2.innerHTML = '<i></i><span>Tested on <b></b> systems</span>';
+      a2.querySelector('b').textContent = String(passed);
+      live.appendChild(a2);
+    }
+    live.hidden = false;
+    document.querySelectorAll('[data-live-version]').forEach(function (e) { e.textContent = 'Sentora-' + d.version; });
+    if (!jobs.length) return;
+    var box = document.getElementById('lasttest'), ul = document.getElementById('lasttest-runs');
+    document.getElementById('lasttest-title').textContent = 'Release ' + d.version + ': ' + (all ? 'passed on all ' + passed : passed + ' of ' + jobs.length + ' passed');
+    document.getElementById('lasttest-link').href = d.run;
+    document.getElementById('lasttest-note').textContent = 'Read live from GitHub. Tested ' + day(d.runDate) + ': each system installed from scratch, restarted, checked and smoke-tested before the release was published.';
+    jobs.forEach(function (j) {
+      var li = document.createElement('li'), b = document.createElement('b'), s = document.createElement('span'), t = document.createElement('span');
+      b.textContent = SYS[j.sys] || j.sys;
+      s.className = j.ok === 'success' ? 'pass' : 'fail'; s.textContent = j.ok === 'success' ? 'Passed' : 'Did not pass';
+      t.textContent = j.a && j.b ? 'Installed and tested in ' + mins(j.a, j.b) + ' min' : '';
+      li.appendChild(b); li.appendChild(s); li.appendChild(t); ul.appendChild(li);
+    });
+    box.hidden = false;
+  }).catch(function () {});
 })();
 
 // Ask Sentora: the answer in plain words, from the Ask Sentora helper (worker/ask-sentora in this site's
