@@ -124,6 +124,29 @@ nav ul a:hover, nav ul a:focus-visible { color: var(--text); }
 .tray i { width: 14px; height: 14px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 25%, transparent); }
 .tray span { font: 13px var(--body); color: #dfe7ec; }
 
+/* screenshots */
+.shots-bar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tabs button, .scheme button { font: 600 14px var(--body); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+.tabs button[aria-selected="true"], .scheme button[aria-pressed="true"] { color: #1b1305; background: var(--brass); border-color: var(--brass); }
+.tabs button:focus-visible, .scheme button:focus-visible { outline: 2px solid var(--foam); outline-offset: 2px; }
+.scheme { display: flex; gap: 4px; }
+.frame { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--deep); box-shadow: 0 30px 80px -40px #000; }
+.frame-bar { display: flex; align-items: center; gap: 7px; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+.frame-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+.frame-bar span { margin-left: 10px; font: 12px var(--mono); color: var(--muted); }
+.frame img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+.shot-caption { margin-top: 14px; color: var(--muted); }
+.shot-caption b { color: var(--text); font-weight: 600; }
+
+/* dig deeper */
+.deeper { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.deeper a { display: grid; gap: 6px; align-content: start; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--deep); color: var(--text); text-decoration: none; }
+.deeper a:hover, .deeper a:focus-visible { border-color: var(--foam); outline: none; }
+.deeper b { font: 700 21px/1.1 var(--display); text-transform: uppercase; letter-spacing: .02em; }
+.deeper span { color: var(--muted); font-size: 14px; }
+.deeper em { font: 12px var(--mono); color: var(--foam); font-style: normal; }
+
 footer { border-top: 1px solid var(--line); padding-block: 36px; color: var(--muted); font-size: 14px; }
 footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: space-between; }
 
@@ -151,6 +174,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
     <ul>
       <li><a href="#install">Install</a></li>
       <li><a href="#security">Security</a></li>
+      <li><a href="#screenshots">Screenshots</a></li>
       <li><a href="#inside">What's inside</a></li>
       <li><a href="#windows">Windows</a></li>
       <li><a href="https://github.com/RusTus/sentora-core-2027">GitHub</a></li>
@@ -241,6 +265,35 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
   </div>
 </section>
 
+<section id="screenshots">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Real screens from a test server</p>
+      <h2>Have a look around</h2>
+      <p class="lede">Taken from a fresh install. Light or dark follows each computer's own setting, or you choose one.</p>
+    </div>
+    <div class="shots-bar">
+      <div class="tabs" role="tablist" aria-label="Screens">
+        <button type="button" role="tab" id="tab-home" aria-selected="true" data-shot="home">Home</button>
+        <button type="button" role="tab" id="tab-dashboard" aria-selected="false" data-shot="dashboard">Dashboard</button>
+        <button type="button" role="tab" id="tab-server-monitor" aria-selected="false" data-shot="server-monitor">Server Monitor</button>
+        <button type="button" role="tab" id="tab-payment-plans" aria-selected="false" data-shot="payment-plans">Payment Plans</button>
+        <button type="button" role="tab" id="tab-web-hardening" aria-selected="false" data-shot="web-hardening">Web Hardening</button>
+        <button type="button" role="tab" id="tab-login" aria-selected="false" data-shot="login">Login</button>
+      </div>
+      <div class="scheme" aria-label="Look">
+        <button type="button" id="look-light" aria-pressed="true" data-scheme="light">Light</button>
+        <button type="button" id="look-dark" aria-pressed="false" data-scheme="dark">Dark</button>
+      </div>
+    </div>
+    <div class="frame">
+      <div class="frame-bar"><i></i><i></i><i></i><span id="shot-url">https://panel.example.com/</span></div>
+      <a id="shot-link" href="assets/shots/home-light.webp"><img id="shot-img" src="assets/shots/home-light.webp" width="1600" height="1000" alt="The Sentora 2027 home page: every tool in coloured sections"></a>
+    </div>
+    <p class="shot-caption" id="shot-caption"><b>Home.</b> Every tool in coloured sections with new icons: account, server admin, advanced, databases, domains, mail.</p>
+  </div>
+</section>
+
 <section id="inside">
   <div class="wrap">
     <div class="sec-head">
@@ -302,6 +355,23 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
   </div>
 </section>
 
+<section id="more">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">On GitHub</p>
+      <h2>Dig deeper</h2>
+      <p class="lede">Everything is open: read the code, every change, and the notes on how each part works.</p>
+    </div>
+    <div class="deeper">
+      <a href="https://github.com/RusTus/sentora-core-2027#readme"><em>RusTus/sentora-core-2027</em><b>The panel</b><span>The core and its README: every module, the supported systems, how it all fits together.</span></a>
+      <a href="https://github.com/RusTus/sentora-installers-2027#readme"><em>RusTus/sentora-installers-2027</em><b>Installers &amp; add-ons</b><span>The installers for every system, the Windows setup, and the add-on repository.</span></a>
+      <a href="https://github.com/RusTus/sentora-installers-2027/blob/master2027/CHANGELOG.md"><em>CHANGELOG.md</em><b>What's new</b><span>Every change, release by release, in plain words.</span></a>
+      <a href="https://github.com/RusTus/sentora-installers-2027/releases/tag/current"><em>Releases</em><b>Downloads</b><span>The current release: the install command's files and Sentora2027Setup.exe.</span></a>
+      <a href="https://github.com/RusTus/sentora-core-2027/issues"><em>Issues</em><b>Report a problem</b><span>Found something wrong? Tell us, with what you saw and on which system.</span></a>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
     <span>Sentora 2027 &middot; free and open source under the GNU GPL v3</span>
@@ -318,6 +388,34 @@ document.querySelectorAll('.cmd button').forEach(function (b) {
     if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(code.textContent).then(function () { say('Copied'); }, select); } else { select(); }
   });
 });
+
+(function () {
+  var info = {
+    'home': ['/', 'The Sentora 2027 home page: every tool in coloured sections', '<b>Home.</b> Every tool in coloured sections with new icons: account, server admin, advanced, databases, domains, mail.'],
+    'dashboard': ['/?module=dashboard', 'The dashboard with its widgets', '<b>Dashboard.</b> Widgets you arrange yourself: getting started, usage, site health, domains, security, backups, spam and the server.'],
+    'server-monitor': ['/?module=server_monitor', 'Server Monitor with live CPU, memory, network and disk figures', '<b>Server Monitor.</b> CPU per core, load, memory, network and disk, live (these are the test machine\'s real figures).'],
+    'payment-plans': ['/?module=payment_plans', 'Payment Plans with three priced packages', '<b>Payment Plans.</b> A price for each package, invoices, reminders and payment through PayPal or Stripe (example packages, in test mode).'],
+    'web-hardening': ['/?module=php_hardening', 'Web Hardening: ModSecurity and Snuffleupagus settings', '<b>Web Hardening.</b> ModSecurity with the OWASP rules in Apache, Snuffleupagus inside PHP: each off, watch only or on.'],
+    'login': ['/', 'The Sentora 2027 login page', '<b>Login.</b> A clean sign-in, with session security on by default.']
+  };
+  var shot = 'home';
+  var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var scheme = dark ? 'dark' : 'light';
+  var img = document.getElementById('shot-img'), link = document.getElementById('shot-link');
+  function show() {
+    var src = 'assets/shots/' + shot + '-' + scheme + '.webp', i = info[shot];
+    img.src = src; img.alt = i[1]; link.href = src;
+    document.getElementById('shot-url').textContent = 'https://panel.example.com' + i[0];
+    document.getElementById('shot-caption').innerHTML = i[2];
+    document.querySelectorAll('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.shot === shot ? 'true' : 'false'); });
+    document.querySelectorAll('.scheme button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.scheme === scheme ? 'true' : 'false'); });
+  }
+  document.querySelectorAll('.tabs button').forEach(function (b) { b.addEventListener('click', function () { shot = b.dataset.shot; show(); }); });
+  document.querySelectorAll('.scheme button').forEach(function (b) { b.addEventListener('click', function () { scheme = b.dataset.scheme; show(); }); });
+  show();
+  // (the other screens load after the page, so switching is instant)
+  window.addEventListener('load', function () { Object.keys(info).forEach(function (k) { ['light', 'dark'].forEach(function (s) { new Image().src = 'assets/shots/' + k + '-' + s + '.webp'; }); }); });
+})();
 </script>
 </body>
 </html>
