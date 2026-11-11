@@ -35,7 +35,7 @@
  ],
  "applicationCategory": "BusinessApplication",
  "applicationSubCategory": "Web hosting control panel",
- "operatingSystem": "Ubuntu 26.04, Debian 13, AlmaLinux 10, Rocky Linux 10, Red Hat Enterprise Linux 10, Fedora 45, Windows 11 (WSL), Windows Server 2025",
+ "operatingSystem": "Ubuntu 26.04, Debian 13, AlmaLinux 10, Rocky Linux 10, Red Hat Enterprise Linux 10, Fedora 45, Windows 11 (WSL), Windows Server 2025, Docker",
  "description": "Sentora 2027 is a free, open-source web hosting control panel for Ubuntu, Debian, AlmaLinux, Rocky Linux, RHEL, Fedora and Windows (WSL): web, mail, DNS, FTP and databases, secure by default, with one-command install, migration from old Sentora and one-click updates.",
  "url": "https://sentorareloaded2027.github.io/",
  "image": "https://sentorareloaded2027.github.io/assets/og-image.jpg",
@@ -340,6 +340,13 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
 .faq .a { padding: 0 18px 18px; color: var(--muted); display: grid; gap: 10px; font-size: 15px; }
 .faq .a b { color: var(--text); font-weight: 600; }
 @media (max-width: 900px) { .faq { grid-template-columns: minmax(0, 1fr); } }
+/* docker */
+.docker { margin-top: 44px; border: 1px solid var(--line); border-radius: 10px; background: var(--deep); padding: 26px; display: grid; gap: 12px; }
+.docker h3 { font-size: 27px; }
+.docker .where { margin: 0; }
+.docker > p { color: var(--muted); font-size: 15px; max-width: 80ch; }
+.docker > p b, .docker > p code { color: var(--text); }
+.docker .cmd code { white-space: pre; }
 @media (prefers-reduced-motion: reduce) { .t-bar b { animation: none; } html { scroll-behavior: auto; } }
 </style>
 <script type="application/ld+json">
@@ -351,6 +358,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
   {"@type": "Question", "name": "How much memory does it need?", "acceptedAnswer": {"@type": "Answer", "text": "There's no fixed minimum. ClamAV, the virus scanner, needs about 1.5 GB on its own, so on a smaller server it's left off and can be switched on later in SpamAV Admin. On Windows, give the PC 8 GB or more."}},
   {"@type": "Question", "name": "Can I upgrade my old Sentora or ZPanel server?", "acceptedAnswer": {"@type": "Answer", "text": "Not in place: Sentora 2027 goes on a fresh server, and the installer stops if it finds an old panel. Your accounts, sites, databases and mail move over with two commands."}},
   {"@type": "Question", "name": "Does it run in a virtual machine or a VPS?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. It's tested in virtual machines and in containers on GitHub. A VPS or cloud server works the same way, as long as it's a fresh install of one of the supported systems. On Windows inside a virtual machine, switch on nested virtualization first."}},
+  {"@type": "Question", "name": "Is there a Docker image?", "acceptedAnswer": {"@type": "Answer", "text": "Yes: ghcr.io/rustus/sentora2027, on a Linux host with Docker. It installs Sentora the first time the container starts, runs without --privileged, and keeps its nightly backup in a volume that outlives the container. The command."}},
   {"@type": "Question", "name": "Windows or Linux for real hosting?", "acceptedAnswer": {"@type": "Answer", "text": "Linux. Inside WSL there is no SELinux or AppArmor, and Windows updates restart the PC. Windows is great for trying Sentora, a home lab or an office server; for hosting other people's websites, use a Linux server."}},
   {"@type": "Question", "name": "How do I remove it?", "acceptedAnswer": {"@type": "Answer", "text": "Windows: Settings > Apps > Sentora 2027 > Uninstall. Everything goes; your backups stay. Linux: Sentora sets up the whole server, so there's no uninstaller. Take a backup and reinstall the system to start clean."}},
   {"@type": "Question", "name": "Where do I get help?", "acceptedAnswer": {"@type": "Answer", "text": "Find an answer below searches the guides and the changelog. Found a problem? Tell us on GitHub, with what you saw and on which system."}}]
@@ -453,6 +461,22 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
       <div class="step"><span class="n">1 · install</span><h3>Answer a few questions</h3><p>The panel's name, your email and time zone. Every password it makes is shown once and saved in /root/passwords.txt.</p></div>
       <div class="step"><span class="n">2 · restart</span><h3>Restart the server</h3><p>Every service starts at boot by itself. Five minutes later the panel's daemon has done its first run.</p></div>
       <div class="step"><span class="n">3 · check</span><h3>Prove it works</h3><p><code>sentora-post-install-check</code> looks at about a hundred things; <code>sentora-smoke-test</code> runs 26 real steps, from FTP upload to mail delivery.</p></div>
+    </div>
+    <div class="docker" id="docker">
+      <p class="where">Or with Docker, on a Linux host</p>
+      <h3>A ready-made image</h3>
+      <p><b>ghcr.io/rustus/sentora2027</b> installs Sentora the first time the container starts, so every container gets its own passwords. It runs without <code>--privileged</code>, and GitHub installs, checks and smoke-tests it before every release is published. Put in your panel's address and your email:</p>
+      <div class="cmd"><code>docker run -d --name sentora --hostname panel.example.com \
+  -e SENTORA_EMAIL=you@example.com -e TZ=America/Chicago \
+  --restart unless-stopped --cgroupns=private --security-opt writable-cgroups=true \
+  --tmpfs /run --tmpfs /run/lock --cap-add NET_ADMIN -v sentora-backup:/backup \
+  -p 80:80 -p 443:443 -p 21:21 -p 61000-61099:61000-61099 -p 25:25 -p 465:465 -p 587:587 \
+  -p 110:110 -p 143:143 -p 993:993 -p 995:995 -p 4190:4190 \
+  ghcr.io/rustus/sentora2027</code><button type="button">Copy</button></div>
+      <p>Watch it install (about five minutes), then read the passwords:</p>
+      <div class="cmd"><code>docker logs -f sentora</code><button type="button">Copy</button></div>
+      <div class="cmd"><code>docker exec sentora cat /root/passwords.txt</code><button type="button">Copy</button></div>
+      <p>The nightly full backup goes into the <b>sentora-backup</b> volume, which stays on the host when the container is removed; a new container restores from it. FTP's passive ports are 61000&ndash;61099. For hosting other people's websites, a plain Linux server keeps every guard on. <a href="https://github.com/RusTus/sentora-core-2027#in-docker">Every option explained</a></p>
     </div>
   </div>
 </section>
@@ -724,6 +748,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
       <details><summary>How much memory does it need?</summary><div class="a"><p>There's no fixed minimum. ClamAV, the virus scanner, needs about <b>1.5 GB</b> on its own, so on a smaller server it's left off and can be switched on later in SpamAV Admin. On Windows, give the PC <b>8 GB or more</b>.</p></div></details>
       <details><summary>Can I upgrade my old Sentora or ZPanel server?</summary><div class="a"><p>Not in place: Sentora 2027 goes on a <b>fresh server</b>, and the installer stops if it finds an old panel. Your accounts, sites, databases and mail <a href="#move">move over with two commands</a>.</p></div></details>
       <details><summary>Does it run in a virtual machine or a VPS?</summary><div class="a"><p>Yes. It's tested in virtual machines and in containers on GitHub. A VPS or cloud server works the same way, as long as it's a fresh install of one of the supported systems. On Windows inside a virtual machine, switch on <b>nested virtualization</b> first.</p></div></details>
+      <details><summary>Is there a Docker image?</summary><div class="a"><p>Yes: <b>ghcr.io/rustus/sentora2027</b>, on a Linux host with Docker. It installs Sentora the first time the container starts, runs without <code>--privileged</code>, and keeps its nightly backup in a volume that outlives the container. <a href="#docker">The command</a>.</p></div></details>
       <details><summary>Windows or Linux for real hosting?</summary><div class="a"><p><b>Linux.</b> Inside WSL there is no SELinux or AppArmor, and Windows updates restart the PC. Windows is great for trying Sentora, a home lab or an office server; for hosting other people's websites, use a Linux server.</p></div></details>
       <details><summary>How do I remove it?</summary><div class="a"><p><b>Windows:</b> Settings &gt; Apps &gt; Sentora 2027 &gt; Uninstall. Everything goes; your backups stay.</p><p><b>Linux:</b> Sentora sets up the whole server, so there's no uninstaller. Take a backup and reinstall the system to start clean.</p></div></details>
       <details><summary>Where do I get help?</summary><div class="a"><p><a href="#docs">Find an answer</a> below searches the guides and the changelog. Found a problem? <a href="https://github.com/RusTus/sentora-core-2027/issues">Tell us on GitHub</a>, with what you saw and on which system.</p></div></details>
