@@ -240,6 +240,25 @@ nav ul a:hover, nav ul a:focus-visible { color: var(--text); }
 .figs span { color: var(--muted); font-size: 14px; }
 @media (max-width: 900px) { .rebuilt { grid-template-columns: minmax(0, 1fr); } }
 
+/* find an answer */
+.finder { display: grid; gap: 14px; }
+.finder-box { display: flex; align-items: center; gap: 10px; background: #04121a; border: 1px solid var(--line); border-radius: 8px; padding: 0 14px; }
+.finder-box:focus-within { border-color: var(--foam); }
+.finder-box svg { flex: none; width: 18px; height: 18px; stroke: var(--muted); }
+.finder-box input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; color: var(--text); font: 17px var(--body); padding: 15px 0; }
+.finder-box input::placeholder { color: #5f7d8b; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { font: 500 13px var(--body); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.chips button:hover, .chips button:focus-visible { color: var(--text); border-color: var(--foam); outline: none; }
+.finder-status { color: var(--muted); font-size: 14px; min-height: 1.4em; }
+.results { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.results a { display: grid; gap: 6px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--deep); color: var(--text); text-decoration: none; }
+.results a:hover, .results a:focus-visible { border-color: var(--foam); outline: none; }
+.results .src { font: 12px var(--mono); color: var(--foam); }
+.results b { font-weight: 600; font-size: 16px; }
+.results p { color: var(--muted); font-size: 14px; line-height: 1.55; margin: 0; overflow-wrap: anywhere; }
+.results mark { background: color-mix(in srgb, var(--brass) 30%, transparent); color: var(--text); border-radius: 2px; padding: 0 2px; }
+
 /* dig deeper */
 .deeper { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
 .deeper a { display: grid; gap: 6px; align-content: start; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--deep); color: var(--text); text-decoration: none; }
@@ -279,6 +298,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
       <li><a href="#security">Security</a></li>
       <li><a href="#screenshots">Screenshots</a></li>
       <li><a href="#inside">What's inside</a></li>
+      <li><a href="#docs">Find an answer</a></li>
       <li><a href="https://github.com/RusTus/sentora-core-2027">GitHub</a></li>
     </ul>
   </div>
@@ -587,6 +607,32 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
   </div>
 </section>
 
+<section id="docs">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">How do I...?</p>
+      <h2>Find an answer</h2>
+      <p class="lede">Search the panel's guide and every change in the changelog, read live from GitHub, so it always matches the newest release.</p>
+    </div>
+    <div class="finder">
+      <label class="finder-box" for="finder-q">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <input id="finder-q" type="search" autocomplete="off" placeholder="For example: move sites from my old server, PHP version, Let's Encrypt, backup" aria-describedby="finder-status">
+      </label>
+      <div class="chips" aria-label="Examples">
+        <button type="button">move from old Sentora</button>
+        <button type="button">PHP version</button>
+        <button type="button">Let's Encrypt certificate</button>
+        <button type="button">restore a backup</button>
+        <button type="button">two-factor login</button>
+        <button type="button">Windows</button>
+      </div>
+      <p class="finder-status" id="finder-status" aria-live="polite"></p>
+      <ul class="results" id="finder-results"></ul>
+    </div>
+  </div>
+</section>
+
 <section id="more">
   <div class="wrap">
     <div class="sec-head">
@@ -647,6 +693,100 @@ document.querySelectorAll('.cmd button').forEach(function (b) {
   show();
   // (the other screens load after the page, so switching is instant)
   window.addEventListener('load', function () { Object.keys(info).forEach(function (k) { ['light', 'dark'].forEach(function (s) { new Image().src = 'assets/shots/' + k + '-' + s + '.webp'; }); }); });
+})();
+
+// Find an answer: the READMEs and the changelog, read from GitHub, cut into sections and searched here
+(function () {
+  var RAW = 'https://raw.githubusercontent.com/RusTus/', GH = 'https://github.com/RusTus/';
+  var SOURCES = [
+    { label: 'Panel guide', raw: RAW + 'sentora-core-2027/master2027/README.md', page: GH + 'sentora-core-2027/blob/master2027/README.md', kind: 'guide', weight: 1.6 },
+    { label: 'Installers guide', raw: RAW + 'sentora-installers-2027/master2027/README.md', page: GH + 'sentora-installers-2027/blob/master2027/README.md', kind: 'guide', weight: 1.4 },
+    { label: 'Changelog', raw: RAW + 'sentora-core-2027/master2027/CHANGELOG.md', page: GH + 'sentora-core-2027/blob/master2027/CHANGELOG.md', kind: 'log', weight: 1 }
+  ];
+  var STOP = ' a an and are as at be by can do does for from how i in is it its me my of on or the this to what when where which who why will with you your ';
+  var docs = null, loading = null;
+  var q = document.getElementById('finder-q'), out = document.getElementById('finder-results'), status = document.getElementById('finder-status');
+  // GitHub's heading anchors
+  function slug(t) { return t.trim().toLowerCase().replace(/<[^>]+>/g, '').replace(/[^\w\- ]+/g, '').replace(/ /g, '-'); }
+  function plain(t) { return t.replace(/```[a-z]*\n?/g, '').replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/[*`>#|]/g, '').replace(/(^|\s)_|_(\s|$)/g, '$1$2').replace(/\s+/g, ' ').trim(); }
+  function parse(src, text) {
+    var list = [], lines = text.replace(/\r/g, '').split('\n');
+    if (src.kind === 'guide') {
+      var cur = null, parent = '';
+      lines.forEach(function (l) {
+        var h = /^(#{1,4})\s+(.*)$/.exec(l);
+        if (h) {
+          if (h[1].length <= 2) parent = h[2];
+          cur = { src: src, title: h[2], path: h[1].length > 2 && parent ? parent + ' › ' + h[2] : h[2], url: src.page + '#' + slug(h[2]), body: [] };
+          list.push(cur);
+        } else if (cur) { cur.body.push(l); }
+      });
+    } else {
+      var entry = null;
+      lines.forEach(function (l) {
+        if (/^- /.test(l)) { entry = { src: src, title: '', path: '', url: src.page, body: [l.slice(2)] }; list.push(entry); }
+        else if (entry && /^\s+\S/.test(l)) { entry.body.push(l); }
+        else { entry = null; }
+      });
+      list.forEach(function (e) { var t = plain(e.body[0]); var m = /^(Release 2027\.\d+)/.exec(t); e.title = m ? m[1] : t.split(/[:.(]/)[0].slice(0, 90); e.path = ''; });
+    }
+    list.forEach(function (d) { d.text = plain(d.body.join('\n')); d.low = (d.title + ' ' + d.text).toLowerCase(); d.lowTitle = d.title.toLowerCase(); });
+    return list.filter(function (d) { return d.text.length > 20; });
+  }
+  function load() {
+    if (loading) return loading;
+    status.textContent = 'Reading the guides and the changelog from GitHub…';
+    loading = Promise.all(SOURCES.map(function (s) {
+      return fetch(s.raw).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) { return parse(s, t); });
+    })).then(function (parts) {
+      docs = [].concat.apply([], parts);
+      status.textContent = docs.length + ' sections ready to search.';
+      if (q.value.trim()) run();
+    }).catch(function () {
+      loading = null;
+      status.textContent = 'GitHub could not be reached just now. Try again in a moment, or read the guides on GitHub (links below).';
+    });
+    return loading;
+  }
+  function words(s) { return s.toLowerCase().replace(/[^\w.'\- ]+/g, ' ').split(/\s+/).filter(function (w) { return w.length > 1 && STOP.indexOf(' ' + w + ' ') < 0; }); }
+  function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function stemOf(w) { return w.length > 4 ? w.replace(/(ing|ed|es|s)$/, '') : w; }
+  function run() {
+    var ws = words(q.value);
+    out.innerHTML = '';
+    if (!ws.length) { status.textContent = docs ? docs.length + ' sections ready to search.' : ''; return; }
+    if (!docs) { load(); return; }
+    var stems = ws.map(stemOf), need = Math.max(1, Math.ceil(stems.length * 0.6)), phrase = ws.join(' ');
+    var hits = [];
+    docs.forEach(function (d) {
+      var found = 0, score = 0;
+      stems.forEach(function (w) {
+        var n = d.low.split(w).length - 1;
+        if (n) { found++; score += Math.min(n, 6) + (d.lowTitle.indexOf(w) >= 0 ? 8 : 0); }
+      });
+      if (found < need) return;
+      if (ws.length > 1 && d.low.indexOf(phrase) >= 0) score += 12;
+      score = score * d.src.weight * (found / stems.length);
+      hits.push({ d: d, score: score });
+    });
+    hits.sort(function (a, b) { return b.score - a.score; });
+    hits = hits.slice(0, 8);
+    status.textContent = hits.length ? 'Best matches for “' + q.value.trim() + '”:' : 'Nothing found for “' + q.value.trim() + '”. Try fewer or other words.';
+    var re = new RegExp('(' + stems.map(function (w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')', 'gi');
+    hits.forEach(function (h) {
+      var d = h.d, t = d.text, at = -1;
+      stems.some(function (w) { at = t.toLowerCase().indexOf(w); return at >= 0; });
+      var from = Math.max(0, at - 90), snip = (from ? '…' : '') + t.slice(from, from + 260) + (t.length > from + 260 ? '…' : '');
+      var li = document.createElement('li');
+      li.innerHTML = '<a href="' + esc(d.url) + '"><span class="src">' + esc(d.src.label + (d.path && d.path !== d.title ? ' › ' + d.path : '')) + '</span><b>' +
+        esc(d.title).replace(re, '<mark>$1</mark>') + '</b><p>' + esc(snip).replace(re, '<mark>$1</mark>') + '</p></a>';
+      out.appendChild(li);
+    });
+  }
+  var timer;
+  q.addEventListener('focus', load, { once: true });
+  q.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(run, 180); });
+  document.querySelectorAll('#docs .chips button').forEach(function (b) { b.addEventListener('click', function () { q.value = b.textContent; load().then ? load().then(run) : run(); q.focus(); }); });
 })();
 </script>
 </body>
