@@ -229,6 +229,14 @@ nav ul a:hover, nav ul a:focus-visible { color: var(--text); }
 .proof-foot b { font: 800 34px/1 var(--display); color: var(--foam); display: block; }
 @media (max-width: 900px) { .proof { grid-template-columns: minmax(0, 1fr); } .proof > div + div { border-left: 0; border-top: 1px solid var(--line); } }
 
+/* rebuilt, not patched */
+.rebuilt { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.figs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.figs div { background: var(--deep); padding: 20px; display: grid; gap: 6px; }
+.figs b { font: 800 44px/1 var(--display); color: var(--brass); font-variant-numeric: tabular-nums; }
+.figs span { color: var(--muted); font-size: 14px; }
+@media (max-width: 900px) { .rebuilt { grid-template-columns: minmax(0, 1fr); } }
+
 /* dig deeper */
 .deeper { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
 .deeper a { display: grid; gap: 6px; align-content: start; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--deep); color: var(--text); text-decoration: none; }
@@ -409,6 +417,23 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
         <div class="cmd"><code>sentora-update</code><button type="button">Copy</button></div>
         <p style="margin:0;color:var(--muted);font-size:14px">Over SSH as root; <code>sentora-update --rollback</code> goes back.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<section id="rebuilt">
+  <div class="wrap rebuilt">
+    <div class="sec-head" style="margin:0">
+      <p class="eyebrow">This is not the old panel</p>
+      <h2>Rebuilt, not patched</h2>
+      <p class="lede">Sentora 2027 kept what was good about Sentora, its Dryden framework and the way the panel works, and went over everything else with a fine-tooth comb. Nearly every file of the old panel was reworked or replaced, the framework was built out for today's PHP, and module after module was rewritten, tested and rewritten again.</p>
+      <p class="lede">The old panel's known bugs and security holes are gone, fixed or replaced along with the code they lived in. What's left is a panel made for PHP 8.5, MySQL 8.4 and today's Linux, with every change written down in the changelog.</p>
+    </div>
+    <div class="figs">
+      <div><b>97%</b><span>of the old panel's files reworked or replaced (212 of 218)</span></div>
+      <div><b>3&#8260;4</b><span>of today's code is new: about 68,000 of 92,000 lines</span></div>
+      <div><b>2.6&times;</b><span>the Dryden framework, kept and built out (7,600 lines then, 19,800 now)</span></div>
+      <div><b>470+</b><span>changes in the changelog; 55 modules, 16 of them new</span></div>
     </div>
   </div>
 </section>
