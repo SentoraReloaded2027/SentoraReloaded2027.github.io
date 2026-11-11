@@ -139,6 +139,22 @@ nav ul a:hover, nav ul a:focus-visible { color: var(--text); }
 .shot-caption { margin-top: 14px; color: var(--muted); }
 .shot-caption b { color: var(--text); font-weight: 600; }
 
+/* move + updates */
+.duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.duo .cmd + .cmd { margin-top: 10px; }
+.where { font: 600 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 18px 0 8px; }
+.ticks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ticks li { padding-left: 26px; position: relative; color: var(--muted); }
+.ticks li::before { content: ""; position: absolute; left: 2px; top: .55em; width: 12px; height: 7px; border-left: 2px solid var(--ok); border-bottom: 2px solid var(--ok); transform: rotate(-45deg); }
+.ticks li b { color: var(--text); font-weight: 600; }
+.update-card { border: 1px solid var(--line); border-radius: 10px; background: var(--deep); padding: 22px; display: grid; gap: 14px; }
+.update-card .notice { border-left: 3px solid var(--brass); padding: 10px 14px; background: color-mix(in srgb, var(--brass) 10%, transparent); font-size: 15px; }
+.update-card .notice b { color: var(--brass); }
+.flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font: 13px var(--mono); color: var(--foam); }
+.flow span { border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; background: #04121a; }
+.flow i { color: var(--muted); font-style: normal; }
+@media (max-width: 900px) { .duo { grid-template-columns: minmax(0, 1fr); } }
+
 /* dig deeper */
 .deeper { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
 .deeper a { display: grid; gap: 6px; align-content: start; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--deep); color: var(--text); text-decoration: none; }
@@ -173,6 +189,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
     <a class="brand" href="#top"><img src="data:image/png;base64,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" alt=""> Sentora <span>2027</span></a>
     <ul>
       <li><a href="#install">Install</a></li>
+      <li><a href="#move">Migrate</a></li>
       <li><a href="#security">Security</a></li>
       <li><a href="#screenshots">Screenshots</a></li>
       <li><a href="#inside">What's inside</a></li>
@@ -241,6 +258,59 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
       <div class="step"><span class="n">1 · install</span><h3>Answer a few questions</h3><p>The panel's name, your email and time zone. Every password it makes is shown once and saved in /root/passwords.txt.</p></div>
       <div class="step"><span class="n">2 · restart</span><h3>Restart the server</h3><p>Every service starts at boot by itself. Five minutes later the panel's daemon has done its first run.</p></div>
       <div class="step"><span class="n">3 · check</span><h3>Prove it works</h3><p><code>sentora-post-install-check</code> looks at about a hundred things; <code>sentora-smoke-test</code> runs 26 real steps, from FTP upload to mail delivery.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="move">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Coming from Sentora 1.0 or 2.0?</p>
+      <h2>Bring everything over</h2>
+      <p class="lede">Two commands move a whole old Sentora server, on Debian, Ubuntu or CentOS, into Sentora 2027. Reading the old server changes nothing on it.</p>
+    </div>
+    <div class="duo">
+      <div>
+        <p class="where">On the old server, as root</p>
+        <div class="cmd"><code>wget https://github.com/RusTus/sentora-installers-2027/releases/download/current/sentora-migrate-export</code><button type="button">Copy</button></div>
+        <div class="cmd"><code>bash sentora-migrate-export --to-server &lt;new server&gt;</code><button type="button">Copy</button></div>
+        <p class="where">On the new server</p>
+        <div class="cmd"><code>sentora-migrate-import /root/sentora-export-&lt;server&gt;-&lt;date&gt; --all --yes</code><button type="button">Copy</button></div>
+      </div>
+      <ul class="ticks">
+        <li><b>Accounts, resellers and packages</b>, matched by name, made here when missing</li>
+        <li><b>Domains</b>, sub-domains, parked domains and their <b>DNS records</b></li>
+        <li><b>Websites and databases</b>, with every database user</li>
+        <li><b>Mailboxes with all their mail</b>, filters and out-of-office replies, and webmail address books</li>
+        <li>Straight over SSH when the old server has no room; <b>checksums</b> on every file</li>
+        <li>A <b>dry run first</b> shows what will happen; then one account at a time, or all at once</li>
+        <li>Old sites keep running on <b>PHP 7.1</b> until you move them to PHP 8; old <b>.htaccess</b> lines fixed, after asking</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="updates">
+  <div class="wrap">
+    <div class="duo">
+      <div class="sec-head" style="margin:0">
+        <p class="eyebrow">No more unzipping</p>
+        <h2>Updates straight from GitHub</h2>
+        <p class="lede">The panel checks for a new release every hour and tells you. One click in Admin &gt; Panel Update, or one command, and it updates itself.</p>
+        <ul class="ticks">
+          <li><b>Checked</b> against its SHA-256 before anything changes</li>
+          <li><b>A backup first</b>, every time (the last five are kept)</li>
+          <li><b>Rollback</b> in one step if you want the version before</li>
+          <li>phpMyAdmin, Roundcube and Matomo <b>come along</b> with the panel</li>
+          <li>Extra PHP versions get their own <b>Update</b> button when a newer build is ready</li>
+        </ul>
+      </div>
+      <div class="update-card" aria-hidden="true">
+        <div class="notice"><b>A panel update is available.</b> Sentora-2027.73 is ready to install.</div>
+        <div class="flow"><span>download</span><i>&rarr;</i><span>check SHA-256</span><i>&rarr;</i><span>back up</span><i>&rarr;</i><span>update</span><i>&rarr;</i><span>done</span></div>
+        <div class="cmd"><code>sentora-update</code><button type="button">Copy</button></div>
+        <p style="margin:0;color:var(--muted);font-size:14px">Over SSH as root; <code>sentora-update --rollback</code> goes back.</p>
+      </div>
     </div>
   </div>
 </section>
