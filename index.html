@@ -145,10 +145,10 @@ nav ul a:hover, nav ul a:focus-visible { color: var(--text); }
 
 /* systems strip */
 .systems { border-block: 1px solid var(--line); background: var(--deep); }
-.systems .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: center; padding-block: 22px; }
+.systems .wrap { display: flex; flex-wrap: wrap; gap: 10px clamp(14px, 1.8vw, 26px); align-items: center; padding-block: 22px; }
 .systems .label { color: var(--muted); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; }
-.systems b { font: 700 22px/1 var(--display); letter-spacing: .02em; }
-.systems b small { font: 500 14px var(--body); color: var(--foam); margin-left: 4px; }
+.systems b { font: 700 clamp(17px, 1.75vw, 22px)/1 var(--display); letter-spacing: .02em; }
+.systems b small { font: 500 clamp(12px, 1.1vw, 14px) var(--body); color: var(--foam); margin-left: 4px; }
 
 /* install */
 .cmd { display: flex; align-items: stretch; background: #04121a; border: 1px solid var(--line); border-radius: 6px; min-width: 0; }
@@ -356,7 +356,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
     <b>Rocky<small>10</small></b>
     <b>RHEL<small>10</small></b>
     <b>Fedora<small>45</small></b>
-    <b>Windows<small>11 / Server 2025 &middot; WSL</small></b>
+    <b>Windows<small>11 / S2025</small></b>
   </div>
 </div>
 
