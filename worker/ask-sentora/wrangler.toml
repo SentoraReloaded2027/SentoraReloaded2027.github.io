@@ -1,0 +1,14 @@
+# Cloudflare Worker settings for Ask Sentora (deploy: see README.md)
+name = "ask-sentora"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# the model that answers: claude-opus-5-5 (best answers) or claude-haiku-5-5 (much cheaper)
+MODEL = "claude-opus-5-5"
+# only this website may ask (several: separated by commas)
+ALLOWED_ORIGIN = "https://sentorareloaded2027.github.io"
+# questions one visitor may ask per hour
+PER_IP_PER_HOUR = "20"
+# The API key is NOT here: it is the secret ANTHROPIC_API_KEY, set in Cloudflare (see README.md)
