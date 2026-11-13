@@ -126,12 +126,12 @@
     <h2>How it works</h2>
     <ul class="ticks">
       <li>Install the <b>Docker Hosting</b> add-on from Admin &gt; Repo Browser in your Sentora 2027 panel.</li>
-      <li>Add a <b>node</b>: a fresh Linux server for the apps. One command on it installs rootless Podman, the Caddy web server and Sentora's node agent; it shows a key you paste into the panel. The panel shows its own code first, so the node knows it is talking to your panel.</li>
+      <li>Add a <b>Docker node</b>: a fresh Linux server for the apps. One command on it installs rootless Podman, the Caddy web server and Sentora's node agent; it shows a key you paste into the panel. The panel shows its own code first, so the node knows it is talking to your panel.</li>
       <li>Give your resellers and clients a <b>share</b>: how many apps, how much CPU, memory and disk, and which apps.</li>
       <li>A customer picks an app, types a name under one of their own domains (for example <b>status.example.com</b>) and presses Start. The panel adds the DNS record if asked, the node downloads the image and starts it.</li>
     </ul>
-    <div class="cmd"><code>curl -fsSL https://raw.githubusercontent.com/RusTus/sentora-installers-2027/master2027/node/sentora2027-node -o sentora2027-node &amp;&amp; sudo bash sentora2027-node</code><button type="button">Copy</button></div>
-    <p>Run that on the new node as root. Nodes can be Ubuntu 26.04, Debian 13, AlmaLinux 10, Rocky Linux 10, Red Hat Enterprise Linux 10 or Fedora 45.</p>
+    <div class="cmd"><code>curl -fsSL https://raw.githubusercontent.com/RusTus/sentora-installers-2027/master2027/docker-node/sentora2027-docker-node -o sentora2027-docker-node &amp;&amp; sudo bash sentora2027-docker-node</code><button type="button">Copy</button></div>
+    <p>Run that on the new Docker node as root. Nodes can be Ubuntu 26.04, Debian 13, AlmaLinux 10, Rocky Linux 10, Red Hat Enterprise Linux 10 or Fedora 45.</p>
   </div>
 </section>
 <section>
@@ -166,7 +166,7 @@
     <h2>Updates, backups and warnings</h2>
     <ul class="ticks">
       <li><b>App updates</b> with one click, or by themselves at night: the new version is started and checked, and the old one comes back if it does not start.</li>
-      <li><b>App backups</b> every night, with Back up now and Put this backup back, carried off the server by Sentora's off-server backup; an app can also <b>move to another node</b> with its data. (Offered when the off-server backup goes to a Sentora backup server.)</li>
+      <li><b>App backups</b> every night, with Back up now and Put this backup back, carried off the server by Sentora's off-server backup; an app can also <b>move to another node</b> with its data. (Offered when the off-server backup goes to a Sentora backup node.)</li>
       <li>The node's own <b>security updates</b>, restarts and the node software's updates from the panel, or by themselves at night.</li>
       <li><b>Needs a look:</b> a node short of disk, waiting for updates or a restart, or gone quiet is shown at the top of the page, with the button that fixes it, and emailed to the administrators.</li>
     </ul>
