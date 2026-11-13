@@ -42,10 +42,11 @@ PAGES = [
   ('windows', 'Windows', 'Windows 11 and Server 2025 through WSL, with a setup program'),
   ('migrate', 'Move from old Sentora', 'Accounts, sites, mail and databases from Sentora 1.0 or 2.0'),
   ('cpanel-alternative', 'Free cPanel alternative', 'Everything a hosting server needs, with no licence fees'),
+  ('docker-hosting', 'Docker app hosting', 'Docker Hub apps for your customers, on servers of their own'),
 ]
 def cmd(c): return '<div class="cmd"><code>%s</code><button type="button">Copy</button></div>' % c
 
-def page(slug, short, title, desc, eyebrow, h1, lede, body):
+def page(slug, short, title, desc, eyebrow, h1, lede, body, faq=None):
     others = ''.join('<a href="/%s/"><b>%s</b><span>%s</span></a>' % (s, n, d) for s, n, d in PAGES if s != slug)
     ld = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Sentora 2027", "item": SITE + "/"},
@@ -78,7 +79,7 @@ def page(slug, short, title, desc, eyebrow, h1, lede, body):
 <link rel="stylesheet" href="/assets/site.css">
 <script type="application/ld+json">
 {json.dumps(ld, indent=1)}
-</script>
+</script>{faqld(faq)}
 </head>
 <body class="topic">
 {nav}
@@ -109,6 +110,16 @@ def page(slug, short, title, desc, eyebrow, h1, lede, body):
     os.makedirs(slug, exist_ok=True)
     open(f'{slug}/index.html', 'w').write(out)
     print('wrote', slug)
+
+def faqld(faq):
+    if not faq:
+        return ''
+    ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": re.sub(r'<[^>]+>', '', html.unescape(a))}} for q, a in faq]}
+    return '\n<script type="application/ld+json">\n' + json.dumps(ld, indent=1) + '\n</script>'
+
+def faqhtml(faq):
+    return ''.join('<details><summary>%s</summary><div class="a"><p>%s</p></div></details>\n' % (html.escape(q), a) for q, a in faq)
 
 def sec(h, inner): return f'<section>\n  <div class="wrap prose">\n    <h2>{h}</h2>\n{inner}\n  </div>\n</section>\n'
 
@@ -264,3 +275,56 @@ page('cpanel-alternative', 'Free cPanel alternative',
     </ul>''')
   + sec('Where it runs', '''    <p>Ubuntu 26.04, Debian 13, AlmaLinux 10, Rocky Linux 10, Red Hat Enterprise Linux 10 and Fedora 45 (<a href="/install/">install</a>), Windows 11 and Windows Server 2025 through WSL (<a href="/windows/">Windows</a>), and as a <a href="/docker/">Docker image</a>. Coming from an old Sentora server? <a href="/migrate/">Bring everything over</a>. Updates are one click in the panel: it downloads, checks, backs up, updates itself and can roll back.</p>''')
 )
+
+# ---------------------------------------------------------------- docker app hosting (the Docker Hosting add-on)
+DH_FAQ = [
+  ('Can I host Docker Hub images for my customers?',
+   'Yes. Docker Hosting runs apps from container images (Docker Hub, GitHub\'s ghcr.io, Quay and other registries) for your customers, each under their own domain with HTTPS. Uptime Kuma, Gitea, Vaultwarden and Nextcloud come ready to start; you add any other image you trust under Your own apps.'),
+  ('Does the node need Docker installed?',
+   'No. The node installer sets up rootless Podman, which runs the same images from Docker Hub without a root daemon. Each customer\'s apps run under that customer\'s own Linux user on the node.'),
+  ('Do the containers run on the panel\'s server?',
+   'Never. They run on separate servers, called nodes: Ubuntu 26.04, Debian 13, AlmaLinux, Rocky Linux or RHEL 10, or Fedora 45. The node calls the panel for its work, so nothing on the node has to be opened for the panel.'),
+  ('Can resellers sell Docker app hosting?',
+   'Yes. The administrator gives resellers a share (number of apps, CPU, memory, disk, and which apps), resellers give their clients part of theirs, or put them on Docker plans of their own. A client can never go past the share it was given.'),
+  ('Is Docker Hosting free?',
+   'Yes. It is a free add-on, open source under the GNU GPL v3 like the rest of Sentora 2027, installed with one click from Repo Browser in the panel.'),
+]
+page('docker-hosting', 'Docker app hosting',
+  'Docker hosting control panel: host Docker Hub apps for your customers | Sentora 2027',
+  'Docker Hosting for Sentora 2027: a free, open-source control panel add-on that runs Docker Hub images (Uptime Kuma, Gitea, Vaultwarden, Nextcloud or any app you add) for your customers and resellers, with rootless Podman on separate servers, HTTPS and limits per customer.',
+  'Free add-on: Docker Hosting', 'Host Docker Hub apps for your customers',
+  'Sell or give your customers their own apps, straight from Docker Hub: picked in the panel, started on a server of their own (a node), under their own domain with HTTPS. The containers never run on the panel\'s server.',
+  sec('How it works', """    <ul class="ticks">
+      <li>Install the <b>Docker Hosting</b> add-on from Admin &gt; Repo Browser in your Sentora 2027 panel.</li>
+      <li>Add a <b>node</b>: a fresh Linux server for the apps. One command on it installs rootless Podman, the Caddy web server and Sentora's node agent; it shows a key you paste into the panel. The panel shows its own code first, so the node knows it is talking to your panel.</li>
+      <li>Give your resellers and clients a <b>share</b>: how many apps, how much CPU, memory and disk, and which apps.</li>
+      <li>A customer picks an app, types a name under one of their own domains (for example <b>status.example.com</b>) and presses Start. The panel adds the DNS record if asked, the node downloads the image and starts it.</li>
+    </ul>""" + '\n    ' + cmd('curl -fsSL https://raw.githubusercontent.com/RusTus/sentora-installers-2027/master2027/node/sentora2027-node -o sentora2027-node &amp;&amp; sudo bash sentora2027-node') + """
+    <p>Run that on the new node as root. Nodes can be Ubuntu 26.04, Debian 13, AlmaLinux 10, Rocky Linux 10, Red Hat Enterprise Linux 10 or Fedora 45.</p>""")
+  + sec('Docker Hub apps, ready to start', """    <div class="tblwrap"><table class="tbl">
+      <thead><tr><th>App</th><th>What it is</th></tr></thead>
+      <tbody>
+        <tr><th>Uptime Kuma</th><td>Watches websites and services and tells you when one is down</td></tr>
+        <tr><th>Gitea</th><td>Git hosting with issues, pull requests and a wiki</td></tr>
+        <tr><th>Vaultwarden</th><td>A password manager that works with the Bitwarden apps</td></tr>
+        <tr><th>Nextcloud</th><td>Files, calendars and contacts in your own cloud</td></tr>
+        <tr><th>Your own apps</th><td>Any image you trust, from Docker Hub, GitHub's ghcr.io, Quay or another registry: its port, data folders and settings filled in once, then offered like the others</td></tr>
+      </tbody></table></div>
+    <p>Every app starts behind a setup password, so only its owner can do its first setup (like making its administrator account). Then one switch opens it to the public.</p>""")
+  + sec('Each customer kept apart', """    <ul class="ticks">
+      <li><b>Rootless Podman</b> runs the same images as Docker, without a root daemon: each customer's apps run under <b>their own Linux user</b> on the node, never as root, with no extra privileges.</li>
+      <li><b>CPU, memory and disk limits</b> per app, held by the kernel; an app over its disk limit stops until it is given more room.</li>
+      <li>Apps listen on the node's 127.0.0.1 only, behind <b>Caddy</b>, which serves each one at its own address over <b>HTTPS</b>.</li>
+      <li>Apps reach the internet, but <b>not your private network</b> (other servers, routers, the panel by its local address) unless the administrator opens it for that customer. The cloud's metadata address stays closed for every app.</li>
+      <li>The panel never connects to a node: the node calls the panel. Every message is <b>signed and sealed</b> with the panel's and the node's own keys.</li>
+    </ul>""")
+  + sec('Updates, backups and warnings', """    <ul class="ticks">
+      <li><b>App updates</b> with one click, or by themselves at night: the new version is started and checked, and the old one comes back if it does not start.</li>
+      <li><b>App backups</b> every night, with Back up now and Put this backup back, carried off the server by Sentora's off-server backup; an app can also <b>move to another node</b> with its data. (Offered when the off-server backup goes to a Sentora backup server.)</li>
+      <li>The node's own <b>security updates</b>, restarts and the node software's updates from the panel, or by themselves at night.</li>
+      <li><b>Needs a look:</b> a node short of disk, waiting for updates or a restart, or gone quiet is shown at the top of the page, with the button that fixes it, and emailed to the administrators.</li>
+    </ul>""")
+  + sec('For hosting businesses', """    <p>Docker app hosting fits the way Sentora already sells hosting. The administrator gives <b>resellers</b> a share; resellers give their <b>clients</b> part of theirs, or make <b>Docker plans</b> of their own (for example Small and Large) and put clients on them. Changing a plan changes every client on it, never below what a client already uses. With the Payment Plans add-on, the same sellers bill their clients through PayPal or Stripe.</p>""")
+  + sec('Tested', """    <p>Before a change is published, its tests start real nodes on Ubuntu 26.04, Debian 13, AlmaLinux 10, Rocky Linux 10 and Fedora 45 on GitHub, pull Uptime Kuma from Docker Hub, run it, read its limits from the kernel, check the setup password and that an app can not reach the node's own services, then restart and delete it. It has also run on a real AlmaLinux 10 node with SELinux enforcing. The add-on's own guide: <a href="https://github.com/RusTus/sentora-installers-2027/tree/master2027/sentora-repo#readme">the add-on repository's README</a>.</p>""")
+  + sec('Questions', '    <div class="faq">' + faqhtml(DH_FAQ) + '</div>'),
+  faq=DH_FAQ)
