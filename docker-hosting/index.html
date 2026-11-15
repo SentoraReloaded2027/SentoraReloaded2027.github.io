@@ -88,7 +88,7 @@
    "name": "Is it safe to run my customers' apps?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "Each app runs under its customer's own Linux user on a separate node, never as root and never on the panel's server, with limits on CPU, memory, processes and disk, behind HTTPS, and kept out of your private network. SELinux and AppArmor stay on, and every change is tested on five Linux systems, attacks included. A sandbox kernel per app (gVisor), a web firewall (Coraza with the OWASP rules), an image check (Trivy) and CrowdSec are being added, on by default."
+    "text": "Each app runs under its customer's own Linux user on a separate node, never as root and never on the panel's server, with limits on CPU, memory, processes and disk, behind HTTPS, and kept out of your private network. SELinux and AppArmor stay on, and every change is tested on five Linux systems, attacks included. Each app runs on a sandbox kernel of its own (gVisor); a web firewall (Coraza with the OWASP rules), an image check (Trivy) and CrowdSec are being added, on by default."
    }
   },
   {
@@ -164,6 +164,7 @@
     <p>Your customers run code you did not write. So every app is fenced in on several sides, nothing is switched off to make it work, and the node itself is reviewed from an attacker's point of view: what a review finds is fixed and tested on every system before it ships.</p>
     <dl class="ledger">
       <div><dt>Own user</dt><dd><strong>Rootless Podman</strong>: each customer's apps run under <strong>their own Linux user</strong> on the node, never as root, with no way to gain privileges (no-new-privileges).</dd></div>
+      <div><dt>Sandbox kernel</dt><dd><strong>gVisor</strong>: each app runs on a small kernel of its own, so an attack on the kernel stays inside the app's sandbox instead of reaching the node. On by default; an administrator can switch it off for a trusted app, or mark a node of their own as trusted.</dd></div>
       <div><dt>Limits</dt><dd><strong>CPU, memory, processes and disk</strong> per app, held by the kernel. An app over its disk limit stops until it is given more room.</dd></div>
       <div><dt>HTTPS only</dt><dd>Apps listen on the node's 127.0.0.1 only, behind <strong>Caddy</strong>, which serves each one at its own address over HTTPS. A new app can sit behind a setup password until it is ready.</dd></div>
       <div><dt>Network fence</dt><dd>Apps reach the internet, but <strong>not your private network</strong> (other servers, routers, the panel by its local address) unless the administrator opens it for that customer. The cloud's metadata address stays closed for every app.</dd></div>
@@ -172,10 +173,9 @@
       <div><dt>Updates</dt><dd>The node installs its own <strong>security updates</strong> every night, and the apps can update themselves, with the old version back if the new one does not start.</dd></div>
       <div><dt>Tested</dt><dd>Every change runs on <strong>five Linux systems</strong> with real nodes before it is published, including attacks: an app must not reach the node's own services.</dd></div>
     </dl>
-    <h3>Coming next: four more guards</h3>
+    <h3>Coming next: three more guards</h3>
     <p>Being added now, each <b>on by default</b>. An administrator can switch one off for a single app, or mark a node of their own as trusted, for development or for apps they wrote themselves.</p>
     <ul>
-      <li><b>gVisor</b>: each app runs on a small sandbox kernel of its own, so an attack on the kernel stays inside the sandbox instead of reaching the node.</li>
       <li><b>Web firewall</b>: Coraza with the OWASP Core Rule Set, the same rules as ModSecurity on the panel, in front of every app.</li>
       <li><b>Image check</b>: Trivy checks an image for known security holes before it starts or updates; critical ones are blocked.</li>
       <li><b>CrowdSec</b>: addresses that probe or attack the apps are blocked at the node's firewall.</li>
@@ -212,7 +212,7 @@
 <details><summary>Does the node need Docker installed?</summary><div class="a"><p>No. The node installer sets up rootless Podman, which runs the same images from Docker Hub without a root daemon. Each customer's apps run under that customer's own Linux user on the node.</p></div></details>
 <details><summary>Do the containers run on the panel&#x27;s server?</summary><div class="a"><p>Never. They run on separate servers, called nodes: Ubuntu 26.04, Debian 13, AlmaLinux, Rocky Linux or RHEL 10, or Fedora 45. The node calls the panel for its work, so nothing on the node has to be opened for the panel.</p></div></details>
 <details><summary>Can resellers sell Docker app hosting?</summary><div class="a"><p>Yes. The administrator gives resellers a share (number of apps, CPU, memory, disk, and which apps), resellers give their clients part of theirs, or put them on Docker plans of their own. A client can never go past the share it was given.</p></div></details>
-<details><summary>Is it safe to run my customers&#x27; apps?</summary><div class="a"><p>Each app runs under its customer's own Linux user on a separate node, never as root and never on the panel's server, with limits on CPU, memory, processes and disk, behind HTTPS, and kept out of your private network. SELinux and AppArmor stay on, and every change is tested on five Linux systems, attacks included. A sandbox kernel per app (gVisor), a web firewall (Coraza with the OWASP rules), an image check (Trivy) and CrowdSec are being added, on by default.</p></div></details>
+<details><summary>Is it safe to run my customers&#x27; apps?</summary><div class="a"><p>Each app runs under its customer's own Linux user on a separate node, never as root and never on the panel's server, with limits on CPU, memory, processes and disk, behind HTTPS, and kept out of your private network. SELinux and AppArmor stay on, and every change is tested on five Linux systems, attacks included. Each app runs on a sandbox kernel of its own (gVisor); a web firewall (Coraza with the OWASP rules), an image check (Trivy) and CrowdSec are being added, on by default.</p></div></details>
 <details><summary>Is Docker Hosting free?</summary><div class="a"><p>Yes. It is a free add-on, open source under the GNU GPL v3 like the rest of Sentora 2027, installed with one click from Repo Browser in the panel.</p></div></details>
 </div>
   </div>
