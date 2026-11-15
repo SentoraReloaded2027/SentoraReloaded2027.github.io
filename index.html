@@ -64,6 +64,8 @@
   "Per-account isolation",
   "Mail with SpamAssassin, ClamAV, Roundcube and SOGo",
   "Billing with PayPal and Stripe (Payment Plans)",
+  "Nightly off-server backups to a Sentora backup node, with one-click restore",
+  "Nightly malware scan of every website (ClamAV)",
   "Docker app hosting: Docker Hub images for customers and resellers, with rootless Podman (Docker Hosting)",
   "Migration from Sentora 1.0 and 2.0",
   "One-click updates with rollback"
@@ -573,6 +575,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
     <dl class="ledger">
       <div><dt>SELinux &amp; AppArmor</dt><dd><strong>On, on every Linux system.</strong> The services the system confines (BIND and ClamAV everywhere, MySQL and ProFTPD too on Ubuntu) run confined, with Sentora's paths added to their profiles, never with the profiles disabled.</dd></div>
       <div><dt>Web firewall</dt><dd><strong>ModSecurity with OWASP CRS 4.25.2</strong>, switched on with the Web Hardening add-on: off, watch only, or blocking.</dd></div>
+      <div><dt>Malware scan</dt><dd><strong>Every website checked by ClamAV every night</strong> for malware and web shells, switched on in SpamAV Admin. A file found can go to quarantine and come back with one click; ClamAV itself gets no access to the sites.</dd></div>
       <div><dt>Account isolation</dt><dd>Every hosting account has <strong>its own Linux user, PHP-FPM pool and closed folder</strong>. One site can't read another.</dd></div>
       <div><dt>Passwords</dt><dd>Mailboxes in <strong>SHA-512 crypt</strong>, FTP as hashes only, MySQL passwords kept encrypted. No plain copies anywhere.</dd></div>
       <div><dt>TLS</dt><dd><strong>Modern connections only.</strong> TLS 1.1 and old CBC ciphers are refused on the web and for mail.</dd></div>
@@ -713,7 +716,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
       <div><h3>Databases</h3><p>MySQL or MariaDB, managed from the panel, with phpMyAdmin.</p></div>
       <div><h3>DNS &amp; FTP</h3><p>BIND for your zones; ProFTPD over TLS with per-account logins.</p></div>
       <div><h3>Stats</h3><p>Matomo analytics, built in.</p></div>
-      <div><h3>Backups</h3><p>Per account, restored with one click, and copied off the server if you want.</p></div>
+      <div><h3>Backups</h3><p>Per account, restored with one click. Every night the whole server is copied to a Sentora backup node (set up with one command) or any SSH server, and one account or the whole panel comes back from it, with a live progress bar.</p></div>
       <div><h3>Server Monitor</h3><p>CPU per core, memory, network, disks and every process, live.</p></div>
       <div><h3>Resellers</h3><p>Packages, clients, your own branding, and an API for automation. Bill your clients with Payment Plans: prices per package, invoices, PayPal or Stripe.</p></div>
       <div><h3>Docker apps</h3><p>With the Docker Hosting add-on, customers start apps from Docker Hub (Uptime Kuma, Gitea, Vaultwarden, Nextcloud or your own) on servers of their own, with HTTPS. <a href="/docker-hosting/">How it works</a></p></div>
