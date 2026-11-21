@@ -299,3 +299,9 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
 .tbl td { color: var(--muted); }
 .tblwrap { overflow-x: auto; }
 .next { border-top: 1px solid var(--line); }
+.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; max-width: 1180px !important; }
+.gallery figure { margin: 0; display: grid; gap: 8px; }
+.gallery img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 10px; display: block; }
+.gallery figcaption { font-size: 14px; color: var(--muted); }
+.gallery figcaption b { color: var(--text); }
+@media (max-width: 760px) { .gallery { grid-template-columns: 1fr; } }

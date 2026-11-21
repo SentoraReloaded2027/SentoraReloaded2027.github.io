@@ -67,6 +67,9 @@
   "Nightly off-server backups to a Sentora backup node, with one-click restore",
   "Nightly malware scan of every website (ClamAV)",
   "Docker app hosting: Docker Hub images for customers and resellers, with rootless Podman (Docker Hosting)",
+  "An Elk node with 34 ready-made Kibana dashboards and walls for a TV (Log Forwarder)",
+  "Kibana dashboards for a FortiGate, Veeam, Microsoft 365, Active Directory and VMware vSphere",
+  "Backup, Docker and Elk nodes, each set up with one command",
   "Migration from Sentora 1.0 and 2.0",
   "One-click updates with rollback"
  ]
@@ -364,6 +367,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
   {"@type": "Question", "name": "How much memory does it need?", "acceptedAnswer": {"@type": "Answer", "text": "There's no fixed minimum. ClamAV, the virus scanner, needs about 1.5 GB on its own, so on a smaller server it's left off and can be switched on later in SpamAV Admin. On Windows, give the PC 8 GB or more."}},
   {"@type": "Question", "name": "Can I upgrade my old Sentora or ZPanel server?", "acceptedAnswer": {"@type": "Answer", "text": "Not in place: Sentora 2027 goes on a fresh server, and the installer stops if it finds an old panel. Your accounts, sites, databases and mail move over with two commands."}},
   {"@type": "Question", "name": "Does it run in a virtual machine or a VPS?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. It's tested in virtual machines and in containers on GitHub. A VPS or cloud server works the same way, as long as it's a fresh install of one of the supported systems. On Windows inside a virtual machine, switch on nested virtualization first."}},
+  {"@type": "Question", "name": "Does it come with Kibana dashboards?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. With the Log Forwarder add-on, an Elk node (Elasticsearch, Logstash and Kibana 9 on a server of its own) installs with one command and comes with 34 ready-made dashboards: websites, mail, security, uptime, server health, and a FortiGate, Veeam, Microsoft 365, Active Directory, VMware vSphere and an online store when you switch them on."}},
   {"@type": "Question", "name": "Is there a Docker image?", "acceptedAnswer": {"@type": "Answer", "text": "Yes: ghcr.io/rustus/sentora2027, on a Linux host with Docker. It installs Sentora the first time the container starts, runs without --privileged, and keeps its nightly backup in a volume that outlives the container. The command."}},
   {"@type": "Question", "name": "Windows or Linux for real hosting?", "acceptedAnswer": {"@type": "Answer", "text": "Linux. Inside WSL there is no SELinux or AppArmor, and Windows updates restart the PC. Windows is great for trying Sentora, a home lab or an office server; for hosting other people's websites, use a Linux server."}},
   {"@type": "Question", "name": "How do I remove it?", "acceptedAnswer": {"@type": "Answer", "text": "Windows: Settings > Apps > Sentora 2027 > Uninstall. Everything goes; your backups stay. Linux: Sentora sets up the whole server, so there's no uninstaller. Take a backup and reinstall the system to start clean."}},
@@ -724,6 +728,47 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
   </div>
 </section>
 
+<section id="dashboards">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Log Forwarder and the Elk node</p>
+      <h2>Kibana, with the dashboards already made</h2>
+      <p class="lede">Most ELK installs leave you with an empty Kibana. The Elk node comes with 34 dashboards for your panel and the systems around it, and walls to put on a TV: green, yellow or red, at a glance.</p>
+    </div>
+    <div class="frame">
+      <div class="frame-bar"><i></i><i></i><i></i><span>Server wall</span></div>
+      <a href="/kibana-dashboards/"><picture><source srcset="assets/shots/elk-serverwall-dark.webp" media="(prefers-color-scheme: dark)"><img loading="lazy" decoding="async" src="assets/shots/elk-serverwall-light.webp" width="1600" height="1351" alt="The Server wall in Kibana: CPU, memory and disk dials, every website and certificate as a green, yellow or red tile"></picture></a>
+    </div>
+    <div class="inside" style="margin-top:22px">
+      <div><h3>Walls for a TV</h3><p>Server, backups, network, security, Microsoft 365, sales, Active Directory and vSphere: big coloured tiles that fit a 4K screen and refresh by themselves.</p></div>
+      <div><h3>Your firewall</h3><p>A FortiGate's sites, VPN users, tunnels to other offices, threats and internet use by hour.</p></div>
+      <div><h3>Your backups</h3><p>Every Veeam job, every machine's newest backup and every repository's free space.</p></div>
+      <div><h3>Microsoft 365 &amp; AD</h3><p>Sign-ins on a map, risky ones and MFA; Active Directory logons, lockouts and admin group changes.</p></div>
+      <div><h3>VMware vSphere</h3><p>Hosts, VMs and datastores from vCenter every minute: CPU, memory, space, alarms, snapshots.</p></div>
+      <div><h3>Flows</h3><p>Sankey charts from source to result: where attacks come from and what they tried, visitors, internet use, failed logons.</p></div>
+      <div><h3>Your store</h3><p>A Magento store's orders, best sellers, searches that found nothing, and the funnel from search to order.</p></div>
+      <div><h3>Alerts in the panel</h3><p>A site down, a disk filling, an account locked out, someone added to Domain Admins: a notice and a mail, with a link to its dashboard.</p></div>
+    </div>
+    <p style="margin-top:18px"><a href="/kibana-dashboards/">See all 34 dashboards and how to set them up</a></p>
+  </div>
+</section>
+
+<section id="nodes">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Grow past one server</p>
+      <h2>Nodes, one command each</h2>
+      <p class="lede">A node is a server of its own that takes one job off the panel. Every kind is installed the same way: one command, a code to compare, a key to paste. Nothing secret is typed across.</p>
+    </div>
+    <div class="inside">
+      <div><h3>Backup node</h3><p>The whole panel copied off the server every night; one account or everything comes back with one click. Six Linux systems.</p></div>
+      <div><h3>Docker node</h3><p>Your customers' apps from Docker Hub, rootless, behind HTTPS and a web firewall. <a href="/docker-hosting/">Docker app hosting</a></p></div>
+      <div><h3>Elk node</h3><p>Elasticsearch, Logstash and Kibana 9 with 34 ready-made dashboards and alerts in the panel. <a href="/kibana-dashboards/">The dashboards</a></p></div>
+    </div>
+    <p style="margin-top:18px"><a href="/nodes/">How nodes work, and the three commands</a></p>
+  </div>
+</section>
+
 <section id="addons">
   <div class="wrap">
     <div class="sec-head">
@@ -739,7 +784,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
       <div class="addon"><b>Web Hardening</b><span>ModSecurity, Snuffleupagus</span></div>
       <div class="addon"><b>Webalizer Stats</b><span>classic traffic reports</span></div>
       <div class="addon"><b>Visitor Stats</b><span>visitors, pages, referrers</span></div>
-      <div class="addon"><b>Log Forwarder</b><span>ELK, OpenSearch, Loki</span></div>
+      <a class="addon" href="/kibana-dashboards/"><b>Log Forwarder</b><span>an Elk node with 34 Kibana dashboards</span></a>
       <div class="addon"><b>PHP-Adminer</b><span>databases in one file</span></div>
     </div>
   </div>
@@ -757,6 +802,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
       <details><summary>How much memory does it need?</summary><div class="a"><p>There's no fixed minimum. ClamAV, the virus scanner, needs about <b>1.5 GB</b> on its own, so on a smaller server it's left off and can be switched on later in SpamAV Admin. On Windows, give the PC <b>8 GB or more</b>.</p></div></details>
       <details><summary>Can I upgrade my old Sentora or ZPanel server?</summary><div class="a"><p>Not in place: Sentora 2027 goes on a <b>fresh server</b>, and the installer stops if it finds an old panel. Your accounts, sites, databases and mail <a href="#move">move over with two commands</a>.</p></div></details>
       <details><summary>Does it run in a virtual machine or a VPS?</summary><div class="a"><p>Yes. It's tested in virtual machines and in containers on GitHub. A VPS or cloud server works the same way, as long as it's a fresh install of one of the supported systems. On Windows inside a virtual machine, switch on <b>nested virtualization</b> first.</p></div></details>
+      <details><summary>Does it come with Kibana dashboards?</summary><div class="a"><p>Yes. With the Log Forwarder add-on, an <b>Elk node</b> (Elasticsearch, Logstash and Kibana 9 on a server of its own) installs with one command and comes with <b>34 ready-made dashboards</b>: websites, mail, security, uptime, server health, and a FortiGate, Veeam, Microsoft 365, Active Directory, VMware vSphere and an online store when you switch them on. <a href="/kibana-dashboards/">The dashboards</a>.</p></div></details>
       <details><summary>Is there a Docker image?</summary><div class="a"><p>Yes: <b>ghcr.io/rustus/sentora2027</b>, on a Linux host with Docker. It installs Sentora the first time the container starts, runs without <code>--privileged</code>, and keeps its nightly backup in a volume that outlives the container. <a href="#docker">The command</a>.</p></div></details>
       <details><summary>Windows or Linux for real hosting?</summary><div class="a"><p><b>Linux.</b> Inside WSL there is no SELinux or AppArmor, and Windows updates restart the PC. Windows is great for trying Sentora, a home lab or an office server; for hosting other people's websites, use a Linux server.</p></div></details>
       <details><summary>How do I remove it?</summary><div class="a"><p><b>Windows:</b> Settings &gt; Apps &gt; Sentora 2027 &gt; Uninstall. Everything goes; your backups stay.</p><p><b>Linux:</b> Sentora sets up the whole server, so there's no uninstaller. Take a backup and reinstall the system to start clean.</p></div></details>
@@ -812,6 +858,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: 
       <a href="/migrate/"><em>Guide</em><b>Move from old Sentora</b><span>Accounts, sites, mail and databases from Sentora 1.0 or 2.0.</span></a>
       <a href="/cpanel-alternative/"><em>Guide</em><b>Free cPanel alternative</b><span>Everything a hosting server needs, with no licence fees.</span></a>
       <a href="/docker-hosting/"><em>Guide</em><b>Docker app hosting</b><span>Docker Hub apps for your customers and resellers, on servers of their own.</span></a>
+      <a href="/kibana-dashboards/"><em>Guide</em><b>Ready-made Kibana dashboards</b><span>The Elk node: 34 dashboards, walls for a TV, alerts in the panel.</span></a>
+      <a href="/nodes/"><em>Guide</em><b>Sentora nodes</b><span>Backup, Docker and Elk nodes: one command each, paired by codes.</span></a>
     </div>
     <div class="deeper">
       <a href="https://github.com/RusTus/sentora-core-2027#readme"><em>RusTus/sentora-core-2027</em><b>The panel</b><span>The core and its README: every module, the supported systems, how it all fits together.</span></a>

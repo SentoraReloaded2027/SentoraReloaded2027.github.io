@@ -1,4 +1,5 @@
-# Builds the website's topic pages (/install/, /docker/, /windows/, /migrate/, /cpanel-alternative/)
+# Builds the website's topic pages (/install/, /docker/, /windows/, /migrate/, /cpanel-alternative/, /docker-hosting/,
+# /kibana-dashboards/, /nodes/)
 # from index.html's own style, nav and footer. Run from the website repository's top folder.
 import re, json, os, html
 SITE = 'https://sentorareloaded2027.github.io'
@@ -33,6 +34,12 @@ EXTRA = '''
 .tbl td { color: var(--muted); }
 .tblwrap { overflow-x: auto; }
 .next { border-top: 1px solid var(--line); }
+.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; max-width: 1180px !important; }
+.gallery figure { margin: 0; display: grid; gap: 8px; }
+.gallery img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 10px; display: block; }
+.gallery figcaption { font-size: 14px; color: var(--muted); }
+.gallery figcaption b { color: var(--text); }
+@media (max-width: 760px) { .gallery { grid-template-columns: 1fr; } }
 '''
 open('assets/site.css', 'w').write(style.strip() + '\n' + EXTRA.strip() + '\n')
 
@@ -43,6 +50,8 @@ PAGES = [
   ('migrate', 'Move from old Sentora', 'Accounts, sites, mail and databases from Sentora 1.0 or 2.0'),
   ('cpanel-alternative', 'Free cPanel alternative', 'Everything a hosting server needs, with no licence fees'),
   ('docker-hosting', 'Docker app hosting', 'Docker Hub apps for your customers, on servers of their own'),
+  ('kibana-dashboards', 'Ready-made Kibana dashboards', '34 dashboards and walls for a TV, made for you'),
+  ('nodes', 'Sentora nodes', 'Backup, Docker and Elk nodes, each set up with one command'),
 ]
 def cmd(c): return '<div class="cmd"><code>%s</code><button type="button">Copy</button></div>' % c
 
@@ -279,16 +288,19 @@ page('cpanel-alternative', 'Free cPanel alternative',
 # ---------------------------------------------------------------- docker app hosting (the Docker Hosting add-on)
 DH_FAQ = [
   ('Can I host Docker Hub images for my customers?',
-   'Yes. Docker Hosting runs apps from container images (Docker Hub, GitHub\'s ghcr.io, Quay and other registries) for your customers, each under their own domain with HTTPS. Uptime Kuma, Gitea, Vaultwarden and Nextcloud come ready to start; you add any other image you trust under Your own apps.'),
+   "Yes. Docker Hosting runs apps from container images (Docker Hub, GitHub's ghcr.io, Quay and other registries) for your customers, each under their own domain with HTTPS. Uptime Kuma, Gitea, Vaultwarden and Nextcloud come ready to start; you add any other image you trust under Your own apps."),
   ('Does the node need Docker installed?',
-   'No. The node installer sets up rootless Podman, which runs the same images from Docker Hub without a root daemon. Each customer\'s apps run under that customer\'s own Linux user on the node.'),
-  ('Do the containers run on the panel\'s server?',
+   "No. The node installer sets up rootless Podman, which runs the same images from Docker Hub without a root daemon. Each customer's apps run under that customer's own Linux user on the node."),
+  ("Do the containers run on the panel's server?",
    'Never. They run on separate servers, called nodes: Ubuntu 26.04, Debian 13, AlmaLinux, Rocky Linux or RHEL 10, or Fedora 45. The node calls the panel for its work, so nothing on the node has to be opened for the panel.'),
   ('Can resellers sell Docker app hosting?',
    'Yes. The administrator gives resellers a share (number of apps, CPU, memory, disk, and which apps), resellers give their clients part of theirs, or put them on Docker plans of their own. A client can never go past the share it was given.'),
+  ("Is it safe to run my customers' apps?",
+   "Each app runs under its customer's own Linux user on a separate node, never as root and never on the panel's server, with limits on CPU, memory, processes and disk, behind HTTPS, and kept out of your private network. SELinux and AppArmor stay on, and every change is tested on five Linux systems, attacks included. Each app sits behind a web firewall (Coraza with the OWASP rules), its image is checked for known security holes (Trivy), repeat attackers are blocked at the node's firewall (CrowdSec), and on Debian and Ubuntu nodes it runs on a sandbox kernel of its own (gVisor)."),
   ('Is Docker Hosting free?',
    'Yes. It is a free add-on, open source under the GNU GPL v3 like the rest of Sentora 2027, installed with one click from Repo Browser in the panel.'),
 ]
+DH_SECURITY = '<section id="security">\n  <div class="wrap prose">\n    <p class="eyebrow">Secure by design</p>\n    <h2>Each customer kept apart, every guard on</h2>\n    <p>Your customers run code you did not write. So every app is fenced in on several sides, nothing is switched off to make it work, and the node itself is reviewed from an attacker\'s point of view: what a review finds is fixed and tested on every system before it ships.</p>\n    <dl class="ledger">\n      <div><dt>Own user</dt><dd><strong>Rootless Podman</strong>: each customer\'s apps run under <strong>their own Linux user</strong> on the node, never as root, with no way to gain privileges (no-new-privileges).</dd></div>\n      <div><dt>Sandbox kernel</dt><dd><strong>gVisor</strong>: each app runs on a small kernel of its own, so an attack on the kernel stays inside the app\'s sandbox instead of reaching the node. On by default on Debian and Ubuntu nodes; an administrator can switch it off for a trusted app, or mark a node of their own as trusted. On AlmaLinux, Rocky, RHEL and Fedora nodes the apps stay confined by SELinux until gVisor works together with it.</dd></div>\n      <div><dt>Web firewall</dt><dd><strong>Coraza</strong> with the OWASP Core Rule Set (the same rules as ModSecurity on the panel) stands in front of every app: SQL and script injection, path tricks, shell commands and known attack tools are refused before they reach it. On by default; Watch or Off per app.</dd></div>\n      <div><dt>Image check</dt><dd><strong>Trivy</strong> checks each app\'s image for known security holes when it starts or updates, and again every night. The app\'s page shows what it found; an administrator can set an app to block images with critical holes that have a fix.</dd></div>\n      <div><dt>Repeat attackers</dt><dd><strong>CrowdSec</strong> watches the apps, SSH and the system: an address that keeps probing or attacking is blocked at the node\'s firewall for a while. Local by default; an administrator can share with the CrowdSec community. The panel shows what is blocked, with an Unblock button and a safe list.</dd></div>\n      <div><dt>Limits</dt><dd><strong>CPU, memory, processes and disk</strong> per app, held by the kernel. An app over its disk limit stops until it is given more room.</dd></div>\n      <div><dt>HTTPS only</dt><dd>Apps listen on the node\'s 127.0.0.1 only, behind <strong>Caddy</strong>, which serves each one at its own address over HTTPS. A new app can sit behind a setup password until it is ready.</dd></div>\n      <div><dt>Network fence</dt><dd>Apps reach the internet, but <strong>not your private network</strong> (other servers, routers, the panel by its local address) unless the administrator opens it for that customer. The cloud\'s metadata address stays closed for every app.</dd></div>\n      <div><dt>SELinux &amp; AppArmor</dt><dd><strong>Stay on</strong> on every system: tested on AlmaLinux with SELinux enforcing, never with a profile disabled.</dd></div>\n      <div><dt>Signed messages</dt><dd>The panel never connects to a node: the node calls the panel. Every message is <strong>signed and sealed</strong> with the panel\'s and the node\'s own keys, and can not be replayed.</dd></div>\n      <div><dt>Updates</dt><dd>The node installs its own <strong>security updates</strong> every night, and the apps can update themselves, with the old version back if the new one does not start.</dd></div>\n      <div><dt>Tested</dt><dd>Every change runs on <strong>five Linux systems</strong> with real nodes before it is published, including attacks: an app must not reach the node\'s own services.</dd></div>\n    </dl>\n  </div>\n</section>\n'
 page('docker-hosting', 'Docker app hosting',
   'Docker hosting control panel: host Docker Hub apps for your customers | Sentora 2027',
   'Docker Hosting for Sentora 2027: a free, open-source control panel add-on that runs Docker Hub images (Uptime Kuma, Gitea, Vaultwarden, Nextcloud or any app you add) for your customers and resellers, with rootless Podman on separate servers, HTTPS and limits per customer.',
@@ -311,13 +323,7 @@ page('docker-hosting', 'Docker app hosting',
         <tr><th>Your own apps</th><td>Any image you trust, from Docker Hub, GitHub's ghcr.io, Quay or another registry: its port, data folders and settings filled in once, then offered like the others</td></tr>
       </tbody></table></div>
     <p>Every app starts behind a setup password, so only its owner can do its first setup (like making its administrator account). Then one switch opens it to the public.</p>""")
-  + sec('Each customer kept apart', """    <ul class="ticks">
-      <li><b>Rootless Podman</b> runs the same images as Docker, without a root daemon: each customer's apps run under <b>their own Linux user</b> on the node, never as root, with no extra privileges.</li>
-      <li><b>CPU, memory and disk limits</b> per app, held by the kernel; an app over its disk limit stops until it is given more room.</li>
-      <li>Apps listen on the node's 127.0.0.1 only, behind <b>Caddy</b>, which serves each one at its own address over <b>HTTPS</b>.</li>
-      <li>Apps reach the internet, but <b>not your private network</b> (other servers, routers, the panel by its local address) unless the administrator opens it for that customer. The cloud's metadata address stays closed for every app.</li>
-      <li>The panel never connects to a node: the node calls the panel. Every message is <b>signed and sealed</b> with the panel's and the node's own keys.</li>
-    </ul>""")
+  + DH_SECURITY
   + sec('Updates, backups and warnings', """    <ul class="ticks">
       <li><b>App updates</b> with one click, or by themselves at night: the new version is started and checked, and the old one comes back if it does not start.</li>
       <li><b>App backups</b> every night, with Back up now and Put this backup back, carried off the server by Sentora's off-server backup; an app can also <b>move to another node</b> with its data. (Offered when the off-server backup goes to a Sentora backup node.)</li>
@@ -328,3 +334,112 @@ page('docker-hosting', 'Docker app hosting',
   + sec('Tested', """    <p>Before a change is published, its tests start real nodes on Ubuntu 26.04, Debian 13, AlmaLinux 10, Rocky Linux 10 and Fedora 45 on GitHub, pull Uptime Kuma from Docker Hub, run it, read its limits from the kernel, check the setup password and that an app can not reach the node's own services, then restart and delete it. It has also run on a real AlmaLinux 10 node with SELinux enforcing. The add-on's own guide: <a href="https://github.com/RusTus/sentora-installers-2027/tree/master2027/sentora-repo#readme">the add-on repository's README</a>.</p>""")
   + sec('Questions', '    <div class="faq">' + faqhtml(DH_FAQ) + '</div>'),
   faq=DH_FAQ)
+
+# ---------------------------------------------------------------- ready-made Kibana dashboards (the Elk node)
+def shot(name, cap, alt):
+    return f"""      <figure><a href="/assets/shots/elk-{name}-light.webp"><picture><source srcset="/assets/shots/elk-{name}-dark.webp" media="(prefers-color-scheme: dark)"><img loading="lazy" decoding="async" src="/assets/shots/elk-{name}-light.webp" width="1600" height="1400" alt="{alt}"></picture></a><figcaption>{cap}</figcaption></figure>
+"""
+ELK_CMD = 'curl -fsSL https://raw.githubusercontent.com/RusTus/sentora-installers-2027/master2027/elk-node/sentora2027-elk-node -o sentora2027-elk-node &amp;&amp; sudo bash sentora2027-elk-node'
+ELK_FAQ = [
+  ('Do I have to build the Kibana dashboards myself?',
+   'No. The Elk node installs 34 Kibana dashboards, made for Sentora\'s logs and for the other sources it reads (a FortiGate, Veeam, Microsoft 365, Active Directory, VMware vSphere, an online store). They work as soon as the logs arrive. You can still make your own, or copy one under another name and change it.'),
+  ('What happens to my own changes when the node is updated?',
+   'An update brings every Sentora dashboard back to its newest version. A copy saved under another name is yours and is never touched.'),
+  ('What does the Elk node need?',
+   'A server of its own (never the panel\'s) with Ubuntu 26.04, at least 4 GB of memory (8 GB or more is better) and room for the logs, kept 30 days unless you choose otherwise. It installs Elasticsearch, Logstash and Kibana 9 from Elastic\'s own packages.'),
+  ('Is it free?',
+   'Sentora 2027, the Log Forwarder add-on and the Elk node installer are free and open source under the GNU GPL v3. The Elastic stack is installed from Elastic\'s own packages and uses its free features.'),
+  ('Can it show my firewall, backups and Active Directory, not only websites?',
+   'Yes. Each is switched on with one command on the node: a FortiGate (sites people visit, VPN users, threats), Veeam Backup &amp; Replication (jobs, machines, repositories), Microsoft 365 and Entra (sign-ins, Teams, mail, Microsoft\'s service health), Active Directory (logons, lockouts, admin group changes, through Winlogbeat on each domain controller) and VMware vCenter (hosts, VMs, datastores).'),
+]
+page('kibana-dashboards', 'Ready-made Kibana dashboards',
+  'Ready-made Kibana dashboards for your servers, firewall, backups, Microsoft 365, Active Directory and vSphere | Sentora 2027',
+  'The Sentora 2027 Elk node installs Elasticsearch, Logstash and Kibana 9 with 34 ready-made Kibana dashboards: websites, mail, security, uptime, a FortiGate, Veeam backups, Microsoft 365, Active Directory, VMware vSphere and an online store, with walls made for a TV and alerts in the panel.',
+  'Log Forwarder and the Elk node', 'Kibana, with the dashboards already made',
+  'Most ELK installs leave you with an empty Kibana and weeks of building dashboards. The Sentora 2027 Elk node comes with 34 of them, made for your panel\'s logs and for the systems around it, plus walls to put on a TV: one look tells you what is green, what is yellow and what needs you now.',
+  sec('What you see, the day it is installed', """    <div class="gallery">
+""" + shot('serverwall', '<b>Server wall.</b> Dials for CPU, memory and disks, moving figures, every website up or down, every certificate\'s days left.', 'The Server wall: CPU, memory and disk dials, websites and certificates as green, yellow and red tiles')
+    + shot('backupwall', '<b>Backup wall.</b> Every Veeam job, machine and repository as a tile: green, yellow or red.', 'The Backup wall: Veeam backup jobs, machines and repositories as coloured tiles')
+    + shot('netwall', '<b>Network wall.</b> Tunnels to other sites up or down, who is on the VPN, what the internet is used for right now.', 'The Network wall from a FortiGate: site-to-site tunnels, VPN users, apps in use')
+    + shot('adwall', '<b>AD wall.</b> Each domain controller, lockouts, failed logons by account and why.', 'The Active Directory wall: domain controllers, lockouts and failed logons')
+    + shot('vswall', '<b>vSphere wall.</b> Hosts, datastores and VMs from vCenter, every minute.', 'The vSphere wall: host dials, datastores and virtual machines as tiles')
+    + shot('flows', '<b>Flows.</b> Where attacks come from, where they hit and what they tried; visitors; internet use; failed logons.', 'Flow charts: attacks, visits, internet use and failed logons from source to result')
+    + """    </div>
+    <p>Taken from a test node with sample data. Light or dark follows Kibana's own setting.</p>""")
+  + sec('Every dashboard, already made', """    <div class="tblwrap"><table class="tbl">
+      <thead><tr><th>Group</th><th>Dashboards</th></tr></thead>
+      <tbody>
+        <tr><th>Walls for a TV</th><td><b>Server</b>, <b>Backup</b>, <b>Network</b>, <b>Security</b>, <b>Microsoft 365</b>, <b>Sales</b>, <b>AD</b> and <b>vSphere</b> walls: big tiles in green, yellow and red that refresh by themselves, each fitting a 4K screen without scrolling</td></tr>
+        <tr><th>At a glance</th><td><b>Today</b> (everything in one page), <b>Week in review</b> (this week against the last, with arrows), <b>Flows</b> (Sankey charts from source to result)</td></tr>
+        <tr><th>The panel</th><td>Overview, <b>World map</b> of visitors and attacks, Websites, <b>Website speed</b> (slow pages), Mail, <b>Mail delivery</b> (bounces, where mail goes), Security, <b>Web firewall</b> (ModSecurity), Panel and server, <b>Server health</b>, <b>Uptime</b> and certificates</td></tr>
+        <tr><th>Attackers</th><td>One address seen by the panel, the FortiGate, Microsoft 365 and Active Directory, joined up: block the worst first</td></tr>
+        <tr><th>FortiGate</th><td>Where people go, VPN and FortiClient users (and site-to-site tunnels), threats, <b>Internet use at the office</b> (busiest hours, streaming and social)</td></tr>
+        <tr><th>Veeam</th><td>Backup jobs and why they failed, <b>Backup coverage</b>: every machine's newest backup and every repository's free space</td></tr>
+        <tr><th>Microsoft 365</th><td>Sign-ins on a map, failed and risky ones, MFA, Teams and mail per day, each Microsoft service's health</td></tr>
+        <tr><th>Active Directory</th><td>Logons and failures with the reason, lockouts and from which computer, admin group changes, accounts created or reset, Group Policy changes, logons outside working hours</td></tr>
+        <tr><th>VMware vSphere</th><td>Hosts, VMs and datastores: CPU, memory, space, alarms, snapshots and VMs that are off</td></tr>
+        <tr><th>Online store</th><td>A Magento store's orders, sales, best sellers and searches that found nothing; the <b>Store funnel</b> from search to order, and the bots in it</td></tr>
+      </tbody></table></div>""")
+  + sec('Alerts in the panel, not only on a screen', """    <p>The node checks every 5 minutes and the panel shows what needs a look as a notice, and mails the administrators: a website down, a certificate running out, a full disk, mail piling up, a burst of failed logins, an address attacking in several places, a failed Veeam job or a machine without a recent backup, a repository or datastore filling up, a Microsoft 365 sign-in from a new country, an account locked out, someone added to Domain Admins, a cleared security log, a vSphere host in red. Each alert links to its dashboard.</p>""")
+  + sec('More than the panel\'s logs', """    <div class="tblwrap"><table class="tbl">
+      <thead><tr><th>Source</th><th>How it arrives</th></tr></thead>
+      <tbody>
+        <tr><th>The Sentora panel</th><td>Its websites, mail, logins, FTP, DNS, the web firewall and fail2ban, over TLS from the panel's Log Forwarder; its health every minute</td></tr>
+        <tr><th>FortiGate</th><td>Syslog over TLS with a certificate the node makes for it, from that address only</td></tr>
+        <tr><th>Veeam Backup &amp; Replication</th><td>Its events over TLS, and its REST API read hourly with a read-only user (its certificate pinned)</td></tr>
+        <tr><th>Microsoft 365 and Entra</th><td>Read from Microsoft Graph with an app that can only read</td></tr>
+        <tr><th>Active Directory</th><td>Winlogbeat on each domain controller, TLS both ways, its own certificate, from its own address only; one setup script per DC</td></tr>
+        <tr><th>VMware vCenter</th><td>Metricbeat on the node with a read-only vCenter user, vCenter's certificate pinned</td></tr>
+        <tr><th>Online store</th><td>A Magento store's orders and searches from the panel (no customer names, mail or street addresses)</td></tr>
+      </tbody></table></div>
+    <p>Each one is off until you switch it on with one command on the node, which then shows the steps for the other side.</p>""")
+  + sec('Set it up', """    <ul class="ticks">
+      <li>On the panel: install <b>Log Forwarder</b> from Admin &gt; Repo Browser and open Advanced &gt; Log Forwarder, Elk node.</li>
+      <li>On a new Ubuntu 26.04 server (at least 4 GB of memory), run the installer as root. It asks for the panel's address and shows the panel's code to compare with the page.</li>
+      <li>It ends with the node's key and the Kibana login: paste the key in the panel's <b>Add the Elk node</b>. The logs start coming, and the dashboards fill.</li>
+    </ul>
+    """ + cmd(ELK_CMD) + """
+    <p>Kibana answers on the node's own address over HTTPS with its own login, which can read the logs but never delete them. <code>sentora-elk-node update</code> keeps the node and its dashboards up to date.</p>""")
+  + sec('Secure by default', """    <ul class="ticks">
+      <li>Elasticsearch's security is on; every user can do only its own job (Logstash writes, Kibana's login reads, the alerts read).</li>
+      <li>The node has its own small certificate authority. The panel and the node check each other's certificates; nothing secret is typed.</li>
+      <li>The firewall lets each source in from its own address only: the panel, the FortiGate, Veeam, each domain controller.</li>
+      <li>Readers of other systems use read-only accounts, and their certificates are pinned once you confirm them.</li>
+    </ul>""")
+  + sec('Tested', """    <p>Every change installs a whole Elk node on GitHub and sends it the panel's logs and every source from stand-ins: FortiGate and Veeam lines, Microsoft Graph, Veeam's API, a Magento store, a domain controller through Winlogbeat's protocol and VMware's own vCenter simulator. It checks that each arrives and is understood, that every dashboard is there, that alerts fire, and that a stranger's certificate or address gets nothing in. Every dashboard is also looked at, light and dark.</p>""")
+  + sec('Questions', '    <div class="faq">' + faqhtml(ELK_FAQ) + '</div>'),
+  faq=ELK_FAQ)
+
+# ---------------------------------------------------------------- nodes
+NODE_FAQ = [
+  ('What is a Sentora node?',
+   'A server of its own that extends your panel: a backup node keeps the nightly copies, a Docker node runs your customers\' apps, an Elk node keeps the logs and shows them in Kibana. Each is set up with one command and paired with the panel by codes, never by typing a password across.'),
+  ('Do nodes need the panel\'s server to be opened up?',
+   'No more than it is. A Docker node calls the panel over HTTPS; the panel calls a backup node over SSH with its own key; the panel sends its logs to an Elk node over TLS. Each side checks the other\'s key or certificate first.'),
+]
+page('nodes', 'Sentora nodes',
+  'Sentora nodes: backup, Docker and Elk servers, each set up with one command | Sentora 2027',
+  'Grow a Sentora 2027 panel past one server: a backup node for nightly off-server copies with one-click restore, Docker nodes for your customers\' apps, and an Elk node with 34 ready-made Kibana dashboards. Each is installed with one command and paired by codes.',
+  'Grow past one server', 'Sentora nodes',
+  'A node is a server of its own that takes on one job for your panel. Every kind is installed the same way: one command on the new server, a code to compare, a key to paste. Nothing secret is typed across, and each side checks the other by itself.',
+  sec('Three kinds of node', """    <div class="tblwrap"><table class="tbl">
+      <thead><tr><th>Node</th><th>What it does</th><th>Systems</th></tr></thead>
+      <tbody>
+        <tr><th>Backup node</th><td>Keeps the nightly copy of the whole panel off the server; one account or the whole panel comes back from it with one click, and Docker apps' backups go there too. On the panel: Module Admin &gt; Backup Config.</td><td>Ubuntu 26.04, Debian 13, AlmaLinux, Rocky Linux and RHEL 10, Fedora 45</td></tr>
+        <tr><th>Docker node</th><td>Runs your customers' apps from Docker Hub with rootless Podman, behind HTTPS and a web firewall, each customer as their own user. With the <a href="/docker-hosting/">Docker Hosting</a> add-on.</td><td>Ubuntu 26.04, Debian 13, AlmaLinux, Rocky Linux and RHEL 10, Fedora 45</td></tr>
+        <tr><th>Elk node</th><td>Elasticsearch, Logstash and Kibana 9 with <a href="/kibana-dashboards/">34 ready-made dashboards</a>, walls for a TV, and alerts in the panel; also reads a FortiGate, Veeam, Microsoft 365, Active Directory and vCenter. With the Log Forwarder add-on.</td><td>Ubuntu 26.04</td></tr>
+      </tbody></table></div>""")
+  + sec('The same three steps for every node', """    <ul class="ticks">
+      <li><b>On the new server</b>, run that node's installer as root. It asks for the panel's address and shows <b>the panel's code</b>: answer yes only when it matches the code on the panel's page.</li>
+      <li>It sets the node up and ends with <b>the node's key</b>, made from the node's own key.</li>
+      <li><b>On the panel</b>, add the node with its address and that key. The panel checks the key the node really answers with, and trusts only that one from then on.</li>
+    </ul>""")
+  + sec('The commands', """    <p class="where">Backup node</p>
+    """ + cmd('curl -fsSL https://raw.githubusercontent.com/RusTus/sentora-installers-2027/master2027/backup-node/sentora2027-backup-node -o sentora2027-backup-node &amp;&amp; sudo bash sentora2027-backup-node') + """
+    <p class="where">Docker node</p>
+    """ + cmd('curl -fsSL https://raw.githubusercontent.com/RusTus/sentora-installers-2027/master2027/docker-node/sentora2027-docker-node -o sentora2027-docker-node &amp;&amp; sudo bash sentora2027-docker-node') + """
+    <p class="where">Elk node</p>
+    """ + cmd(ELK_CMD) + """
+    <p>Each runs on a server of its own, never the panel's. The guide for add-on makers who want a node of their own: <a href="https://github.com/RusTus/sentora-installers-2027/blob/master2027/NODES.md">NODES.md</a>.</p>""")
+  + sec('Questions', '    <div class="faq">' + faqhtml(NODE_FAQ) + '</div>'),
+  faq=NODE_FAQ)
