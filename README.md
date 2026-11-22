@@ -6,7 +6,7 @@ and its installers in [RusTus/sentora-installers-2027](https://github.com/RusTus
 
 - `index.html`: the main page (no build step).
 - Topic pages, one for each thing people search for: `/install/`, `/docker/`, `/windows/`,
-  `/migrate/`, `/cpanel-alternative/`, `/docker-hosting/` (the Docker Hosting add-on), `/kibana-dashboards/` (the Elk node's dashboards), `/nodes/`. They are made by `tools/build-pages.py` (their text is in
+  `/migrate/`, `/cpanel-alternative/`, `/docker-hosting/` (the Docker Hosting add-on), `/kibana-dashboards/` (the Elk node's dashboards), `/nodes/`, and one page per Elk node source (`/fortigate-dashboard/`, `/veeam-dashboard/`, `/microsoft-365-dashboard/`, `/active-directory-dashboard/`, `/vmware-vsphere-dashboard/`, `/magento-dashboard/`). They are made by `tools/build-pages.py` (their text is in
   it) with the main page's own style, menu and footer; change the text there and run
   `python3 tools/build-pages.py` from the top folder, then commit the pages it wrote.
 - `sitemap.xml` lists every page for search engines; add a new page there too.

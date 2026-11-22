@@ -20,7 +20,7 @@ EXTRA = '''
 .crumbs a { color: var(--muted); }
 .topic section { padding-block: 34px; }
 .topic h2 { font-size: clamp(28px, 4vw, 40px); margin-bottom: 14px; }
-.prose { display: grid; gap: 14px; color: var(--muted); }
+.prose { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; color: var(--muted); }
 .prose > * { max-width: 82ch; }
 .prose > .tblwrap, .prose > .cmd { max-width: 920px; }
 .topic h2 { color: var(--text); }
@@ -55,8 +55,8 @@ PAGES = [
 ]
 def cmd(c): return '<div class="cmd"><code>%s</code><button type="button">Copy</button></div>' % c
 
-def page(slug, short, title, desc, eyebrow, h1, lede, body, faq=None):
-    others = ''.join('<a href="/%s/"><b>%s</b><span>%s</span></a>' % (s, n, d) for s, n, d in PAGES if s != slug)
+def page(slug, short, title, desc, eyebrow, h1, lede, body, faq=None, near=None):
+    others = ''.join('<a href="/%s/"><b>%s</b><span>%s</span></a>' % (s, n, d) for s, n, d in (near or PAGES) if s != slug)
     ld = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Sentora 2027", "item": SITE + "/"},
         {"@type": "ListItem", "position": 2, "name": short, "item": "%s/%s/" % (SITE, slug)}]}
@@ -336,6 +336,9 @@ page('docker-hosting', 'Docker app hosting',
   faq=DH_FAQ)
 
 # ---------------------------------------------------------------- ready-made Kibana dashboards (the Elk node)
+SOURCE_LINKS = [('fortigate-dashboard', 'FortiGate', 'Sites, VPN users, tunnels, threats'), ('veeam-dashboard', 'Veeam', 'Jobs, machines, repositories'),
+                ('microsoft-365-dashboard', 'Microsoft 365', 'Sign-ins, Teams, mail, service health'), ('active-directory-dashboard', 'Active Directory', 'Logons, lockouts, admin groups'),
+                ('vmware-vsphere-dashboard', 'VMware vSphere', 'Hosts, VMs, datastores'), ('magento-dashboard', 'Magento store', 'Orders, best sellers, searches')]
 def shot(name, cap, alt):
     return f"""      <figure><a href="/assets/shots/elk-{name}-light.webp"><picture><source srcset="/assets/shots/elk-{name}-dark.webp" media="(prefers-color-scheme: dark)"><img loading="lazy" decoding="async" src="/assets/shots/elk-{name}-light.webp" width="1600" height="1400" alt="{alt}"></picture></a><figcaption>{cap}</figcaption></figure>
 """
@@ -392,7 +395,8 @@ page('kibana-dashboards', 'Ready-made Kibana dashboards',
         <tr><th>VMware vCenter</th><td>Metricbeat on the node with a read-only vCenter user, vCenter's certificate pinned</td></tr>
         <tr><th>Online store</th><td>A Magento store's orders and searches from the panel (no customer names, mail or street addresses)</td></tr>
       </tbody></table></div>
-    <p>Each one is off until you switch it on with one command on the node, which then shows the steps for the other side.</p>""")
+    <p>Each one is off until you switch it on with one command on the node, which then shows the steps for the other side. Each has a page of its own:</p>
+    <div class="deeper">""" + ''.join('<a href="/%s/"><b>%s</b><span>%s</span></a>' % x for x in SOURCE_LINKS) + """</div>""")
   + sec('Set it up', """    <ul class="ticks">
       <li>On the panel: install <b>Log Forwarder</b> from Admin &gt; Repo Browser and open Advanced &gt; Log Forwarder, Elk node.</li>
       <li>On a new Ubuntu 26.04 server (at least 4 GB of memory), run the installer as root. It asks for the panel's address and shows the panel's code to compare with the page.</li>
@@ -443,3 +447,159 @@ page('nodes', 'Sentora nodes',
     <p>Each runs on a server of its own, never the panel's. The guide for add-on makers who want a node of their own: <a href="https://github.com/RusTus/sentora-installers-2027/blob/master2027/NODES.md">NODES.md</a>.</p>""")
   + sec('Questions', '    <div class="faq">' + faqhtml(NODE_FAQ) + '</div>'),
   faq=NODE_FAQ)
+
+# ---------------------------------------------------------------- one page per source on the Elk node
+SIZES = {'netwall': 1407, 'fortigate': 1799, 'backupwall': 1407, 'coverage': 855, 'm365wall': 1407, 'm365': 2415, 'adwall': 1211, 'ad': 2107,
+         'vswall': 1323, 'vsphere': 1883, 'saleswall': 1043, 'shop': 1799}
+def srcshot(name, cap, alt):
+    return f"""      <figure><a href="/assets/shots/src-{name}-light.webp"><picture><source srcset="/assets/shots/src-{name}-dark.webp" media="(prefers-color-scheme: dark)"><img loading="lazy" decoding="async" src="/assets/shots/src-{name}-light.webp" width="1600" height="{SIZES[name]}" alt="{alt}"></picture></a><figcaption>{cap}</figcaption></figure>
+"""
+def source_page(slug, short, title, desc, h1, lede, shots, see, connect, alerts, tested, faq):
+    page(slug, short, title, desc, 'Ready-made Kibana dashboards', h1, lede,
+      sec('What you see', '    <div class="gallery">\n' + ''.join(srcshot(*x) for x in shots) + '    </div>\n    <p>Taken from a test node with sample data. Light or dark follows Kibana\'s own setting.</p>\n    <ul class="ticks">\n' + ''.join('      <li>%s</li>\n' % x for x in see) + '    </ul>')
+      + sec('How it connects', connect)
+      + sec('Alerts in the panel', '    <ul class="ticks">\n' + ''.join('      <li>%s</li>\n' % x for x in alerts) + '    </ul>\n    <p>Each alert is a notice in the panel and a mail to its administrators, with a link to the dashboard that shows why.</p>')
+      + sec('Part of the Elk node', '    <p>' + tested + ' These dashboards come with the Sentora 2027 <a href="/kibana-dashboards/">Elk node</a> (Elasticsearch, Logstash and Kibana 9 on a server of its own, with 34 ready-made dashboards), set up with one command and paired with your panel\'s Log Forwarder add-on. Each source is off until you switch it on.</p>')
+      + sec('Questions', '    <div class="faq">' + faqhtml(faq) + '</div>'), faq=faq, near=SRC_NEAR)
+
+SRC_PAGES = [
+  ('fortigate-dashboard', 'FortiGate dashboard', 'FortiGate dashboard in Kibana: sites, VPN users, tunnels, threats'),
+  ('veeam-dashboard', 'Veeam dashboard', 'Every Veeam job, machine and repository at a glance'),
+  ('microsoft-365-dashboard', 'Microsoft 365 dashboard', 'Sign-ins, risky logins, Teams, mail and service health'),
+  ('active-directory-dashboard', 'Active Directory dashboard', 'Logons, lockouts and admin group changes from your DCs'),
+  ('vmware-vsphere-dashboard', 'VMware vSphere dashboard', 'Hosts, VMs and datastores from vCenter, every minute'),
+  ('magento-dashboard', 'Magento store dashboard', 'Orders, best sellers, searches and the funnel to checkout'),
+]
+SRC_NEAR = SRC_PAGES + [p for p in PAGES if p[0] in ('kibana-dashboards', 'nodes')]
+
+source_page('fortigate-dashboard', 'FortiGate dashboard',
+  'FortiGate dashboard for Kibana: sites people visit, VPN and FortiClient users, tunnels and threats | Sentora 2027',
+  'Ready-made Kibana dashboards for a FortiGate: the sites people visit and by whom, blocked sites, VPN and FortiClient users, site-to-site tunnels up or down, threats, and internet use by hour. Free with the Sentora 2027 Elk node; the FortiGate sends syslog over TLS with its own certificate.',
+  'A FortiGate dashboard, ready made',
+  'See what goes through your FortiGate without building a single chart: who goes where on the internet, who is on the VPN right now, whether the tunnels to your other offices are up, and what was stopped.',
+  [('netwall', '<b>Network wall.</b> Tunnels up or down, who is on the VPN, internet use right now.', 'Network wall: site-to-site tunnels as green and red tiles, VPN users, apps in use'),
+   ('fortigate', '<b>Where people go.</b> Sites, people, categories, blocked sites, bandwidth by person and app.', 'FortiGate web dashboard: most visited sites, who went where, web categories, blocked sites')],
+  ['<b>Where people go</b>: most visited sites, who went where, web categories, blocked sites and by whom, bandwidth by person and by app',
+   '<b>VPN and FortiClient</b>: who is connected now, from which country, failed VPN logins, data per person; <b>site-to-site tunnels</b> listed apart from people, green or red',
+   '<b>Threats</b>: attacks the IPS stopped, viruses, botnet look-ups by machine, admin logins on the FortiGate',
+   '<b>Internet use at the office</b>: a heat map of the busiest hours and days, streaming, social media and games by person',
+   'The same addresses joined with the panel, Microsoft 365 and Active Directory on the <b>Attackers</b> dashboard'],
+  """    <p class="where">On the Elk node, as root</p>
+    """ + cmd('sentora-elk-node fortigate FORTIGATE-ADDRESS') + """
+    <p>The node makes a certificate for the FortiGate (a .p12 file with its password, shown once), opens port 6516 for that address only, and prints the FortiGate's few CLI lines: syslog in reliable mode over TLS, with that certificate. Import the .p12 and the node's authority on the FortiGate, paste the lines, and the logs start coming. For the sites people visit, a web filter profile in monitor mode on the outgoing policy logs every site without blocking any.</p>""",
+  ['Five or more failed admin logins on the FortiGate in 15 minutes',
+   'Twenty or more failed VPN logins in 15 minutes',
+   'An address that attacks the FortiGate and the panel, Microsoft 365 or Active Directory within the same hour'],
+  'Tested with FortiOS log lines on every change, and running on a real FortiGate.',
+  [('Can I see which websites my staff visit with a FortiGate?', 'Yes. The FortiGate dashboard lists the sites people visit, by person and by category, with the blocked ones, from the FortiGate\'s web filter and traffic logs. A web filter profile in monitor mode logs every site without blocking any.'),
+   ('Does it show FortiClient VPN users?', 'Yes: who is connected now, from where, how much data each one moved and the failed VPN logins. Site-to-site IPsec tunnels are shown apart, as tunnels that are up or down.')])
+
+source_page('veeam-dashboard', 'Veeam dashboard',
+  'Veeam dashboard for Kibana: every backup job, machine and repository at a glance | Sentora 2027',
+  'Ready-made Kibana dashboards for Veeam Backup & Replication: every job green, yellow or red, every machine\'s newest backup, repository free space, and why a job failed. From Veeam\'s own syslog over TLS and its REST API with a read-only user. Free with the Sentora 2027 Elk node.',
+  'A Veeam dashboard, ready made',
+  'Look up and see every backup job in colour: green worked, yellow warned, red failed. Below it, every machine with the hours since its newest backup, and how full each repository is. No scrolling through the Veeam console.',
+  [('backupwall', '<b>Backup wall.</b> Jobs, machines and repositories as green, yellow and red tiles.', 'Backup wall: Veeam jobs, machines and repositories as coloured tiles'),
+   ('coverage', '<b>Backup coverage.</b> Every machine\'s newest backup, oldest first, and every job\'s last result and next run.', 'Backup coverage: every machine with the hours since its newest backup, every job with its last result')],
+  ['<b>Every job</b> as a tile with its last result; failed and warned jobs with Veeam\'s own words for why',
+   '<b>Every machine</b> with the hours since its newest backup: yellow after 26 hours, red after two days',
+   '<b>Every repository</b> with how full it is and the space left',
+   'Job results over the days, how long each job took and how much it moved, malware detections and console logins'],
+  """    <p class="where">On the Elk node, as root</p>
+    """ + cmd('sentora-elk-node veeam VEEAM-SERVER-ADDRESS') + """
+    """ + cmd('sentora-elk-node veeam-api VEEAM-SERVER-ADDRESS USER') + """
+    <p>The first takes Veeam's events: in the Veeam console (12.1 or newer), Options &gt; Event Forwarding &gt; Syslog, TLS to the node's port 6517, open to that address only. The second reads Veeam's REST API every hour with a user that has the Veeam Backup Viewer role; it shows the API's certificate fingerprint once, and trusts only that certificate after you confirm it.</p>""",
+  ['A job whose last run failed',
+   'A machine with no backup for more than 26 hours',
+   'A repository 90% full (an outage at 97%)'],
+  'Tested with Veeam\'s syslog lines and a stand-in for its REST API on every change, and running on a real Veeam Backup &amp; Replication server.',
+  [('Is there a free Veeam dashboard?', 'Yes. The Sentora 2027 Elk node is free and open source, and its Veeam dashboards are ready made: the backup wall, every job\'s results, and every machine\'s newest backup.'),
+   ('Does it need write access to Veeam?', 'No. The API is read by a user with the Veeam Backup Viewer role, and the events come from Veeam\'s own event forwarding.')])
+
+source_page('microsoft-365-dashboard', 'Microsoft 365 dashboard',
+  'Microsoft 365 and Entra ID dashboard for Kibana: sign-ins, risky logins, Teams, mail, service health | Sentora 2027',
+  'Ready-made Kibana dashboards for Microsoft 365 and Entra ID: sign-ins on a world map, failed and risky sign-ins, MFA, people signing in from several countries, Teams and mail per day and per person, and each Microsoft service green, yellow or red. Read from Microsoft Graph with a read-only app. Free with the Sentora 2027 Elk node.',
+  'A Microsoft 365 dashboard, ready made',
+  'Every sign-in to your Microsoft 365 on a map, the failed and risky ones, who signs in from more than one country, how Teams and mail are used, and whether Microsoft itself has a problem right now.',
+  [('m365wall', '<b>Microsoft 365 wall.</b> Each service working or not, sign-ins, failures, risky sign-ins, MFA.', 'Microsoft 365 wall: each Microsoft service as a tile, sign-in counts, risky sign-ins, MFA share'),
+   ('m365', '<b>Microsoft 365.</b> Sign-ins on a map, why they failed, apps, MFA, Teams and mail by day and by person.', 'Microsoft 365 dashboard: map of sign-ins, failed sign-ins and why, Teams and mail per day and per person')],
+  ['<b>Sign-ins</b> on a world map, failed ones with Microsoft\'s reason, risky ones, the share with MFA, the apps people sign in to',
+   '<b>People signing in from more than one country</b>, and sign-ins from abroad',
+   '<b>Teams</b> chats, calls and meetings and <b>mail</b> sent and received, per day and per person',
+   '<b>Microsoft\'s own service health</b>: each service working, slow or down, and the problems Microsoft has open'],
+  """    <p>In Entra, register an app with the application permissions <b>AuditLog.Read.All</b>, <b>Reports.Read.All</b> and <b>ServiceHealth.Read.All</b> (read only), give admin consent and make a client secret.</p>
+    <p class="where">On the Elk node, as root</p>
+    """ + cmd('sentora-elk-node m365 TENANT-ID APP-ID') + """
+    <p>It asks for the secret (never shown or logged) and checks it at once. Sign-ins are read every 5 minutes, Microsoft's daily Teams and mail reports every 6 hours. Sign-in logs need Entra ID P1 or P2; without them the rest still works.</p>""",
+  ['One person signing in from two countries within 3 hours',
+   'A sign-in from a country that person has not signed in from for 30 days',
+   'An address attacking Microsoft 365 and the panel, the FortiGate or Active Directory within the same hour'],
+  'Tested with a stand-in for Microsoft Graph on every change, and running on a real Microsoft 365 tenant.',
+  [('Can Kibana show Microsoft 365 sign-ins?', 'Yes. The Elk node reads them from Microsoft Graph every 5 minutes with an app that can only read, and shows them on a map with the failed and risky ones. Sign-in logs need Entra ID P1 or P2.'),
+   ('Does it need a Global Administrator password?', 'No. It uses an app registered in Entra with three read-only permissions and its own secret, which stays on the node.')])
+
+source_page('active-directory-dashboard', 'Active Directory dashboard',
+  'Active Directory dashboard for Kibana: logons, lockouts, admin group changes, from your domain controllers | Sentora 2027',
+  'Ready-made Kibana dashboards for Active Directory: logons and failed logons with the reason, lockouts and the computer they came from, accounts created or reset, changes to Domain Admins and other admin groups, Group Policy changes and logons outside working hours. From each domain controller through Winlogbeat, over TLS both ways. Free with the Sentora 2027 Elk node.',
+  'An Active Directory dashboard, ready made',
+  'See who logs on, who keeps failing and why, which account just got locked out and from which computer, and who was added to Domain Admins, from your domain controllers\' own security logs.',
+  [('adwall', '<b>AD wall.</b> Each domain controller, lockouts, failed logons by account and why.', 'AD wall: domain controllers, locked-out accounts and failed logons as coloured tiles'),
+   ('ad', '<b>Active Directory.</b> Failures and why, lockouts, admin group changes, account changes, logons by hour and outside working hours.', 'Active Directory dashboard: failed logons and why, lockouts, admin group changes, a heat map of logons')],
+  ['<b>Failed logons</b> with the reason in plain words (wrong password, account locked, password expired) and the computer or address they came from',
+   '<b>Lockouts</b> and the computer that caused them',
+   '<b>Admin groups</b>: who was added to or removed from Domain Admins and the other admin groups, and by whom',
+   '<b>Accounts</b> created, deleted, switched on or off, passwords reset; <b>Group Policy</b> changes and a cleared security log',
+   '<b>Logons outside working hours</b> and remote desktop logons on the domain controllers; a flow chart from computer to account to reason'],
+  """    <p class="where">On the Elk node, as root, once for each domain controller</p>
+    """ + cmd('sentora-elk-node windows DC-ADDRESS') + """
+    <p>Each run makes that domain controller its own certificate and a setup script. Copy the script to the domain controller with Winlogbeat (Elastic's free agent, version 8 or newer) unzipped in <code>C:\\winlogbeat</code>, and run it as an administrator: it sets Winlogbeat up for the node, starts its service, tests the connection and shows which audit settings are off. Only the events that matter are sent, over TLS both ways on port 6518, and the node takes them only from that domain controller's own address with its own certificate.</p>""",
+  ['An account locked out',
+   'Someone added to Domain Admins or another admin group',
+   'A domain controller\'s security log cleared',
+   'Fifteen or more failed logons for one account in 15 minutes',
+   'A domain controller that sent nothing for 6 hours'],
+  'Tested on every change with Elastic\'s own Beats protocol and certificates: the events arrive and are read right, and a certificate for another address, or from another authority, gets nothing in. The setup script is checked as PowerShell.',
+  [('Can I see Active Directory lockouts in Kibana?', 'Yes. Each lockout shows the account and the computer it came from, on the AD wall and the Active Directory dashboard, and it is also an alert in the panel.'),
+   ('What has to be installed on the domain controllers?', 'Winlogbeat, Elastic\'s free agent for Windows event logs (version 8 or newer). The setup script the node makes does the rest: its certificate, its settings and its service.')])
+
+source_page('vmware-vsphere-dashboard', 'VMware vSphere dashboard',
+  'VMware vSphere and vCenter dashboard for Kibana: hosts, VMs, datastores, alarms, snapshots | Sentora 2027',
+  'Ready-made Kibana dashboards for VMware vSphere: every ESXi host\'s CPU and memory, every VM, datastores filling up, alarms, old snapshots and VMs that are off, read from vCenter every minute by Metricbeat with a read-only user. Free with the Sentora 2027 Elk node.',
+  'A vSphere dashboard, ready made',
+  'Every host, every virtual machine and every datastore from your vCenter, every minute: what is busy, what is filling up, which VM has an alarm or a snapshot that should have gone long ago.',
+  [('vswall', '<b>vSphere wall.</b> Dials for the hosts, every datastore and VM as a coloured tile.', 'vSphere wall: host CPU and memory dials, datastores and VMs as coloured tiles'),
+   ('vsphere', '<b>vSphere.</b> Hosts, datastores, the busiest VMs, alarms, snapshots, VMs that are off, and how each changes over the day.', 'vSphere dashboard: tables of hosts and datastores, busiest VMs, alarms, snapshots')],
+  ['<b>Hosts</b>: CPU and memory now and over the day, how many VMs, days up, vCenter\'s own state',
+   '<b>Datastores</b>: how full, space left, how they fill over time',
+   '<b>Virtual machines</b>: the busiest by CPU and memory, which host they run on, the ones that are off',
+   '<b>Alarms</b> vCenter has raised and <b>snapshots</b>, oldest first'],
+  """    <p>In vCenter, make a user with the Read-only role.</p>
+    <p class="where">On the Elk node, as root</p>
+    """ + cmd('sentora-elk-node vsphere VCENTER-ADDRESS USER') + """
+    <p>It shows vCenter's certificate fingerprint; once you confirm it, Metricbeat (Elastic's own) reads vCenter every minute, as its own user, trusting only that certificate and checking its name. The password stays on the node, readable by root and Metricbeat only.</p>""",
+  ['A datastore 90% full (an outage at 97%)',
+   'A host in red, or 90% busy for 15 minutes',
+   'A red alarm on a host or VM',
+   'A snapshot older than a week',
+   'Nothing from vCenter for 15 minutes'],
+  'Tested on every change against VMware\'s own vCenter simulator: 4 hosts, 12 VMs and 2 datastores arrive and are read right, and a certificate that is not confirmed changes nothing.',
+  [('Is there a free vCenter dashboard for Kibana?', 'Yes. The Sentora 2027 Elk node is free and open source; its vSphere wall and vSphere dashboard are ready made, fed by Elastic\'s Metricbeat.'),
+   ('Does it work with ESXi 8?', 'It reads vCenter (or one ESXi host) through the vSphere API with Metricbeat\'s vSphere module, with a read-only user.')])
+
+source_page('magento-dashboard', 'Magento store dashboard',
+  'Magento 2 dashboard for Kibana: orders, sales, best sellers, searches and the funnel to checkout | Sentora 2027',
+  'Ready-made Kibana dashboards for a Magento 2 store on your Sentora panel: orders and sales against last week, best sellers, sales by country, the searches that found nothing, and the funnel from search to cart to order, with the bots in it. No customer names, mail or street addresses leave the panel. Free with the Sentora 2027 Elk node.',
+  'A Magento dashboard, ready made',
+  'Today\'s sales against the same day last week, the latest orders, what sells, where it goes, what people searched for and did not find, and where visitors drop out between the search and the order.',
+  [('saleswall', '<b>Sales wall.</b> Sales and orders today against last week, by hour, latest orders, best sellers, searches that found nothing.', 'Sales wall: sales and orders against last week, sales by hour, latest orders, best sellers'),
+   ('shop', '<b>Online store.</b> Sales over time, order status, best sellers, sales by country, what visitors search for.', 'Online store dashboard: orders, sales, best-selling products, searches')],
+  ['<b>Orders and sales</b>: today and this week against the one before, with arrows up or down; status, country',
+   '<b>Best sellers</b> and sales by country',
+   '<b>Searches</b>: what visitors search for, and the searches that found nothing (products you could add)',
+   '<b>The funnel</b>: searches, cart adds, checkouts and orders from the store\'s visits, carts left, and the bots in the buying pages'],
+  """    <p>The store is a Magento 2 website on your Sentora panel. On the panel: Advanced &gt; Log Forwarder, Elk node, <b>Online store</b>: pick the website. Every daemon run then reads what changed from the store's own database through the panel's connection, and sends it to the node over the same pinned connection as the logs.</p>
+    <p>Only what the dashboards need is sent: order number, status, totals, items, the billing country and region. Never names, mail addresses, street addresses or payment details. The store's database must belong to that website's owner on the panel, or nothing is read.</p>""",
+  ['The store\'s website down, or its certificate running out (it is watched like every website on the panel)'],
+  'Tested on every change with a Magento 2 database stand-in, and running on a real Magento store.',
+  [('Can Kibana show Magento orders?', 'Yes. With the Sentora 2027 Elk node, a Magento 2 store on the panel sends its orders, products and searches to Kibana, without customer names, mail or street addresses.'),
+   ('Can I see what customers searched for and did not find?', 'Yes. The Sales wall and the Online store dashboard list Magento\'s searches that found nothing, and the searches read from the store\'s visits.')])
