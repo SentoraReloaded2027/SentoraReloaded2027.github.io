@@ -346,6 +346,8 @@ ELK_CMD = 'curl -fsSL https://raw.githubusercontent.com/RusTus/sentora-installer
 ELK_FAQ = [
   ('Do I have to build the Kibana dashboards myself?',
    'No. The Elk node installs 34 Kibana dashboards, made for Sentora\'s logs and for the other sources it reads (a FortiGate, Veeam, Microsoft 365, Active Directory, VMware vSphere, an online store). They work as soon as the logs arrive. You can still make your own, or copy one under another name and change it.'),
+  ('Isn\'t Kibana hard to set up, with no dashboards or alerts of its own?',
+   'On its own, often yes: you get an empty Kibana, build every dashboard yourself and add alerting on top. That is why people look at paid services with dashboards already made. The Sentora Elk node closes those gaps: <b>one command</b> installs Elasticsearch, Logstash and Kibana 9, and each extra source is one more command; <b>34 dashboards</b> are already made and fill as soon as the logs arrive; <b>alerts</b> (a website down, a full datastore, a failed backup, an account locked out, an attacker) show in the panel and are mailed to the administrators; and it <b>costs nothing to run</b>, where paid services such as Datadog, Splunk or New Relic charge by how much data you send.'),
   ('What happens to my own changes when the node is updated?',
    'An update brings every Sentora dashboard back to its newest version. A copy saved under another name is yours and is never touched.'),
   ('What does the Elk node need?',
