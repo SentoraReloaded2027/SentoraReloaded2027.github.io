@@ -50,7 +50,7 @@ PAGES = [
   ('migrate', 'Move from old Sentora', 'Accounts, sites, mail and databases from Sentora 1.0 or 2.0'),
   ('cpanel-alternative', 'Free cPanel alternative', 'Everything a hosting server needs, with no licence fees'),
   ('docker-hosting', 'Docker app hosting', 'Docker Hub apps for your customers, on servers of their own'),
-  ('kibana-dashboards', 'Ready-made Kibana dashboards', '34 dashboards and walls for a TV, made for you'),
+  ('kibana-dashboards', 'Ready-made Kibana dashboards', '35 dashboards and walls for a TV, made for you'),
   ('nodes', 'Sentora nodes', 'Backup, Docker and Elk nodes, each set up with one command'),
 ]
 def cmd(c): return '<div class="cmd"><code>%s</code><button type="button">Copy</button></div>' % c
@@ -345,13 +345,15 @@ def shot(name, cap, alt):
 ELK_CMD = 'curl -fsSL https://raw.githubusercontent.com/RusTus/sentora-installers-2027/master2027/elk-node/sentora2027-elk-node -o sentora2027-elk-node &amp;&amp; sudo bash sentora2027-elk-node'
 ELK_FAQ = [
   ('Do I have to build the Kibana dashboards myself?',
-   'No. The Elk node installs 34 Kibana dashboards, made for Sentora\'s logs and for the other sources it reads (a FortiGate, Veeam, Microsoft 365, Active Directory, VMware vSphere, an online store). They work as soon as the logs arrive. You can still make your own, or copy one under another name and change it.'),
+   'No. The Elk node installs 35 Kibana dashboards, made for Sentora\'s logs and for the other sources it reads (a FortiGate, Veeam, Microsoft 365, Active Directory, VMware vSphere, an online store). They work as soon as the logs arrive. You can still make your own, or copy one under another name and change it.'),
   ('Isn\'t Kibana hard to set up, with no dashboards or alerts of its own?',
-   'On its own, often yes: you get an empty Kibana, build every dashboard yourself and add alerting on top. That is why people look at paid services with dashboards already made. The Sentora Elk node closes those gaps: <b>one command</b> installs Elasticsearch, Logstash and Kibana 9, and each extra source is one more command; <b>34 dashboards</b> are already made and fill as soon as the logs arrive; <b>alerts</b> (a website down, a full datastore, a failed backup, an account locked out, an attacker) show in the panel and are mailed to the administrators; and it <b>costs nothing to run</b>, where paid services such as Datadog, Splunk or New Relic charge by how much data you send.'),
+   'On its own, often yes: you get an empty Kibana, build every dashboard yourself and add alerting on top. That is why people look at paid services with dashboards already made. The Sentora Elk node closes those gaps: <b>one command</b> installs Elasticsearch, Logstash and Kibana 9, and each extra source is one more command; <b>35 dashboards</b> are already made and fill as soon as the logs arrive; <b>alerts</b> (a website down, a full datastore, a failed backup, an account locked out, an attacker) show in the panel and are mailed to the administrators; and it <b>costs nothing to run</b>, where paid services such as Datadog, Splunk or New Relic charge by how much data you send.'),
   ('What happens to my own changes when the node is updated?',
    'An update brings every Sentora dashboard back to its newest version. A copy saved under another name is yours and is never touched.'),
+  ('Can I add a Kibana dashboard someone else made?',
+   'Yes, with one command on the node: <code>sentora-elk-node dashboard install FILE.ndjson</code> (a Kibana export, Stack Management &gt; Saved objects &gt; Export, or an https:// address of one). The file is checked first: only dashboards and what they show come in, never connectors or alerting rules that could act or send your logs elsewhere, and Sentora\'s own dashboards can not be replaced. <code>dashboard list</code> shows what was added and <code>dashboard remove NAME</code> takes away exactly that.'),
   ('What does the Elk node need?',
-   'A server of its own (never the panel\'s) with Ubuntu 26.04, at least 4 GB of memory (8 GB or more is better) and room for the logs, kept 30 days unless you choose otherwise. It installs Elasticsearch, Logstash and Kibana 9 from Elastic\'s own packages.'),
+   'A server of its own (never the panel\'s) with Ubuntu 26.04, Debian 13, AlmaLinux, Rocky Linux or RHEL 10, or Fedora 45, at least 4 GB of memory (8 GB or more is better) and room for the logs, kept 30 days unless you choose otherwise. It installs Elasticsearch, Logstash and Kibana 9 from Elastic\'s own packages.'),
   ('Is it free?',
    'Sentora 2027, the Log Forwarder add-on and the Elk node installer are free and open source under the GNU GPL v3. The Elastic stack is installed from Elastic\'s own packages and uses its free features.'),
   ('Can it show my firewall, backups and Active Directory, not only websites?',
@@ -359,9 +361,9 @@ ELK_FAQ = [
 ]
 page('kibana-dashboards', 'Ready-made Kibana dashboards',
   'Ready-made Kibana dashboards for your servers, firewall, backups, Microsoft 365, Active Directory and vSphere | Sentora 2027',
-  'The Sentora 2027 Elk node installs Elasticsearch, Logstash and Kibana 9 with 34 ready-made Kibana dashboards: websites, mail, security, uptime, a FortiGate, Veeam backups, Microsoft 365, Active Directory, VMware vSphere and an online store, with walls made for a TV and alerts in the panel.',
+  'The Sentora 2027 Elk node installs Elasticsearch, Logstash and Kibana 9 with 35 ready-made Kibana dashboards: websites, mail, security, uptime, a FortiGate, Veeam backups, Microsoft 365, Active Directory, VMware vSphere and an online store, with walls made for a TV and alerts in the panel.',
   'Log Forwarder and the Elk node', 'Kibana, with the dashboards already made',
-  'Most ELK installs leave you with an empty Kibana and weeks of building dashboards. The Sentora 2027 Elk node comes with 34 of them, made for your panel\'s logs and for the systems around it, plus walls to put on a TV: one look tells you what is green, what is yellow and what needs you now.',
+  'Most ELK installs leave you with an empty Kibana and weeks of building dashboards. The Sentora 2027 Elk node comes with 35 of them, made for your panel\'s logs and for the systems around it, plus walls to put on a TV: one look tells you what is green, what is yellow and what needs you now.',
   sec('What you see, the day it is installed', """    <div class="gallery">
 """ + shot('serverwall', '<b>Server wall.</b> Dials for CPU, memory and disks, moving figures, every website up or down, every certificate\'s days left.', 'The Server wall: CPU, memory and disk dials, websites and certificates as green, yellow and red tiles')
     + shot('backupwall', '<b>Backup wall.</b> Every Veeam job, machine and repository as a tile: green, yellow or red.', 'The Backup wall: Veeam backup jobs, machines and repositories as coloured tiles')
@@ -377,6 +379,7 @@ page('kibana-dashboards', 'Ready-made Kibana dashboards',
         <tr><th>Walls for a TV</th><td><b>Server</b>, <b>Backup</b>, <b>Network</b>, <b>Security</b>, <b>Microsoft 365</b>, <b>Sales</b>, <b>AD</b> and <b>vSphere</b> walls: big tiles in green, yellow and red that refresh by themselves, each fitting a 4K screen without scrolling</td></tr>
         <tr><th>At a glance</th><td><b>Today</b> (everything in one page), <b>Week in review</b> (this week against the last, with arrows), <b>Flows</b> (Sankey charts from source to result)</td></tr>
         <tr><th>The panel</th><td>Overview, <b>World map</b> of visitors and attacks, Websites, <b>Website speed</b> (slow pages), Mail, <b>Mail delivery</b> (bounces, where mail goes), Security, <b>Web firewall</b> (ModSecurity), Panel and server, <b>Server health</b>, <b>Uptime</b> and certificates</td></tr>
+        <tr><th>zGod</th><td>With the <b>zGod</b> add-on: every account's disk and bandwidth over time, the accounts nearest their quotas, the biggest users, accounts by reseller and package, every suspension and why</td></tr>
         <tr><th>Attackers</th><td>One address seen by the panel, the FortiGate, Microsoft 365 and Active Directory, joined up: block the worst first</td></tr>
         <tr><th>FortiGate</th><td>Where people go, VPN and FortiClient users (and site-to-site tunnels), threats, <b>Internet use at the office</b> (busiest hours, streaming and social)</td></tr>
         <tr><th>Veeam</th><td>Backup jobs and why they failed, <b>Backup coverage</b>: every machine's newest backup and every repository's free space</td></tr>
@@ -401,7 +404,7 @@ page('kibana-dashboards', 'Ready-made Kibana dashboards',
     <div class="deeper">""" + ''.join('<a href="/%s/"><b>%s</b><span>%s</span></a>' % x for x in SOURCE_LINKS) + """</div>""")
   + sec('Set it up', """    <ul class="ticks">
       <li>On the panel: install <b>Log Forwarder</b> from Admin &gt; Repo Browser and open Advanced &gt; Log Forwarder, Elk node.</li>
-      <li>On a new Ubuntu 26.04 server (at least 4 GB of memory), run the installer as root. It asks for the panel's address and shows the panel's code to compare with the page.</li>
+      <li>On a new server with Ubuntu 26.04, Debian 13, AlmaLinux, Rocky Linux or RHEL 10, or Fedora 45 (at least 4 GB of memory), run the installer as root. It asks for the panel's address and shows the panel's code to compare with the page.</li>
       <li>It ends with the node's key and the Kibana login: paste the key in the panel's <b>Add the Elk node</b>. The logs start coming, and the dashboards fill.</li>
     </ul>
     """ + cmd(ELK_CMD) + """
@@ -425,7 +428,7 @@ NODE_FAQ = [
 ]
 page('nodes', 'Sentora nodes',
   'Sentora nodes: backup, Docker and Elk servers, each set up with one command | Sentora 2027',
-  'Grow a Sentora 2027 panel past one server: a backup node for nightly off-server copies with one-click restore, Docker nodes for your customers\' apps, and an Elk node with 34 ready-made Kibana dashboards. Each is installed with one command and paired by codes.',
+  'Grow a Sentora 2027 panel past one server: a backup node for nightly off-server copies with one-click restore, Docker nodes for your customers\' apps, and an Elk node with 35 ready-made Kibana dashboards. Each is installed with one command and paired by codes.',
   'Grow past one server', 'Sentora nodes',
   'A node is a server of its own that takes on one job for your panel. Every kind is installed the same way: one command on the new server, a code to compare, a key to paste. Nothing secret is typed across, and each side checks the other by itself.',
   sec('Three kinds of node', """    <div class="tblwrap"><table class="tbl">
@@ -433,7 +436,7 @@ page('nodes', 'Sentora nodes',
       <tbody>
         <tr><th>Backup node</th><td>Keeps the nightly copy of the whole panel off the server; one account or the whole panel comes back from it with one click, and Docker apps' backups go there too. On the panel: Module Admin &gt; Backup Config.</td><td>Ubuntu 26.04, Debian 13, AlmaLinux, Rocky Linux and RHEL 10, Fedora 45</td></tr>
         <tr><th>Docker node</th><td>Runs your customers' apps from Docker Hub with rootless Podman, behind HTTPS and a web firewall, each customer as their own user. With the <a href="/docker-hosting/">Docker Hosting</a> add-on.</td><td>Ubuntu 26.04, Debian 13, AlmaLinux, Rocky Linux and RHEL 10, Fedora 45</td></tr>
-        <tr><th>Elk node</th><td>Elasticsearch, Logstash and Kibana 9 with <a href="/kibana-dashboards/">34 ready-made dashboards</a>, walls for a TV, and alerts in the panel; also reads a FortiGate, Veeam, Microsoft 365, Active Directory and vCenter. With the Log Forwarder add-on.</td><td>Ubuntu 26.04</td></tr>
+        <tr><th>Elk node</th><td>Elasticsearch, Logstash and Kibana 9 with <a href="/kibana-dashboards/">35 ready-made dashboards</a>, walls for a TV, and alerts in the panel; also reads a FortiGate, Veeam, Microsoft 365, Active Directory and vCenter. With the Log Forwarder add-on.</td><td>Ubuntu 26.04, Debian 13, AlmaLinux, Rocky Linux and RHEL 10, Fedora 45</td></tr>
       </tbody></table></div>""")
   + sec('The same three steps for every node', """    <ul class="ticks">
       <li><b>On the new server</b>, run that node's installer as root. It asks for the panel's address and shows <b>the panel's code</b>: answer yes only when it matches the code on the panel's page.</li>
@@ -461,7 +464,7 @@ def source_page(slug, short, title, desc, h1, lede, shots, see, connect, alerts,
       sec('What you see', '    <div class="gallery">\n' + ''.join(srcshot(*x) for x in shots) + '    </div>\n    <p>Taken from a test node with sample data. Light or dark follows Kibana\'s own setting.</p>\n    <ul class="ticks">\n' + ''.join('      <li>%s</li>\n' % x for x in see) + '    </ul>')
       + sec('How it connects', connect)
       + sec('Alerts in the panel', '    <ul class="ticks">\n' + ''.join('      <li>%s</li>\n' % x for x in alerts) + '    </ul>\n    <p>Each alert is a notice in the panel and a mail to its administrators, with a link to the dashboard that shows why.</p>')
-      + sec('Part of the Elk node', '    <p>' + tested + ' These dashboards come with the Sentora 2027 <a href="/kibana-dashboards/">Elk node</a> (Elasticsearch, Logstash and Kibana 9 on a server of its own, with 34 ready-made dashboards), set up with one command and paired with your panel\'s Log Forwarder add-on. Each source is off until you switch it on.</p>')
+      + sec('Part of the Elk node', '    <p>' + tested + ' These dashboards come with the Sentora 2027 <a href="/kibana-dashboards/">Elk node</a> (Elasticsearch, Logstash and Kibana 9 on a server of its own, with 35 ready-made dashboards), set up with one command and paired with your panel\'s Log Forwarder add-on. Each source is off until you switch it on.</p>')
       + sec('Questions', '    <div class="faq">' + faqhtml(faq) + '</div>'), faq=faq, near=SRC_NEAR)
 
 SRC_PAGES = [
